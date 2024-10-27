@@ -94,18 +94,22 @@ const columns: ColumnDef<Person>[] = [
 // };
 
 function TableView() {
-    const { page } = usePagination();
+    const { page, setPage } = usePagination();
 
     const [sorting, setSorting] = useState<SortingState>([]);
 
     const dataTableProps: DatatableProps<Person> = {
         columns,
         data,
-        page,
-        pageCount: 10,
-        onRowSelectedChange: selectedRows => {},
         sorting,
         setSorting,
+        page,
+        pageCount: 10,
+        onPageChange: page => {
+            setPage(page);
+            console.log(page);
+        },
+        onRowSelectedChange: selectedRows => {},
     };
 
     return (

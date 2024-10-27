@@ -1,8 +1,19 @@
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from '@/components/ui/pagination';
+
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import {
     ColumnDef,
     flexRender,
     getCoreRowModel,
+    PaginationState,
     RowSelectionState,
     SortingState,
     useReactTable,
@@ -17,7 +28,13 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
+import {
+    ArrowDown,
+    ArrowUp,
+    ArrowUpDown,
+    ChevronLeft,
+    ChevronRight,
+} from 'lucide-react';
 
 export interface SortOptions<TData> {
     sortBy: keyof TData;
@@ -36,11 +53,14 @@ export interface DatatableProps<TData> {
 }
 
 export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
-    const { columns, data, onRowSelectedChange } = dataTableProps;
-
-    const [rowSelection, setRowSelection] = useState({});
-
-    const [sorting, setSorting] = useState<SortingState>([]);
+    const {
+        columns,
+        data,
+        onRowSelectedChange,
+        page,
+        pageCount,
+        onPageChange,
+    } = dataTableProps;
 
     const columnsWithMultiSelect = useMemo(
         () => [
@@ -70,16 +90,29 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
         []
     );
 
+    const [rowSelection, setRowSelection] = useState({});
+
+    const [sorting, setSorting] = useState<SortingState>([]);
+
+    const [pagination, setPagination] = useState<PaginationState>({
+        pageIndex: page,
+        pageSize: pageCount,
+    });
+
     const table = useReactTable({
         data,
         columns: columnsWithMultiSelect,
+        pageCount,
         state: {
             rowSelection,
             sorting,
+            pagination,
         },
         onRowSelectionChange: setRowSelection,
         getCoreRowModel: getCoreRowModel(),
+        onPaginationChange: setPagination,
         onSortingChange: setSorting,
+        manualPagination: true,
         manualSorting: true,
         enableMultiSort: true,
     });
@@ -174,9 +207,91 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
                 </Table>
             </div>
 
-            <div className="mt-4">
-                {Object.keys(rowSelection).length} of{' '}
-                {table.getPreFilteredRowModel().rows.length} row(s) selected.
+            <div className="mt-4 flex justify-between items-center">
+                <div>
+                    {Object.keys(rowSelection).length} of{' '}
+                    {table.getPreFilteredRowModel().rows.length} row(s)
+                    selected.
+                </div>
+                <div>
+                    <Pagination>
+                        <PaginationContent>
+                            <PaginationItem>
+                                <Button
+                                    variant="outline"
+                                    className="h-8 w-8 p-0"
+                                    onClick={() => table.previousPage()}
+                                    disabled={!table.getCanPreviousPage()}
+                                >
+                                    <span className="sr-only">
+                                        Go to previous page
+                                    </span>
+                                    <ChevronLeft className="h-4 w-4" />
+                                </Button>
+                            </PaginationItem>
+
+                            {/* <PaginationItem>
+                                <PaginationLink
+                                    href="#"
+                                    isActive={ === 1}
+                                >
+                                    1
+                                </PaginationLink>
+                            </PaginationItem> */}
+
+                            {/* {currentPage > 3 && <PaginationEllipsis />}
+
+                            {currentPage > 2 && currentPage < totalPages && (
+                                <PaginationItem>
+                                    <PaginationLink href="#" isActive>
+                                        {currentPage}
+                                    </PaginationLink>
+                                </PaginationItem>
+                            )}
+
+                            {currentPage < totalPages - 1 && (
+                                <PaginationEllipsis />
+                            )} */}
+
+                            {/* <PaginationItem>
+                                <PaginationLink
+                                    href="#"
+                                    isActive={currentPage === totalPages}
+                                >
+                                    {totalPages}
+                                </PaginationLink>
+                            </PaginationItem> */}
+
+                            <PaginationItem>
+                                <Button
+                                    variant="outline"
+                                    className="h-8 w-8 p-0"
+                                    onClick={() => table.nextPage()}
+                                    disabled={!table.getCanNextPage()}
+                                >
+                                    <span className="sr-only">
+                                        Go to next page
+                                    </span>
+                                    <ChevronRight className="h-4 w-4" />
+                                </Button>
+                            </PaginationItem>
+                            {/* <PaginationItem>
+                                <Button
+                                    variant="outline"
+                                    className="hidden h-8 w-8 p-0 lg:flex"
+                                    onClick={()=>table.lastPage()}
+                                    disabled={!canNextPage}
+                                >
+                                    <span className="sr-only">
+                                        Go to last page
+                                    </span>
+                                    <ChevronsRight className="h-4 w-4" />
+                                </Button>
+                            </PaginationItem>
+                                 */}
+                        </PaginationContent>
+                    </Pagination>
+                </div>
             </div>
         </>
     );
