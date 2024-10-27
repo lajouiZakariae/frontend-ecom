@@ -5,7 +5,6 @@ import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { FC, SVGProps } from 'react';
 import { useTranslation } from 'react-i18next';
-// import { Chrome } from 'lucide-react';
 
 const GoogleIcon: FC<SVGProps<SVGSVGElement>> = ({ className, ...props }) => (
     <svg
