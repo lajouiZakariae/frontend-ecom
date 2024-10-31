@@ -100,6 +100,7 @@ function TableView() {
         columns,
         data,
         sorting,
+        isError: true,
         setSorting,
         page,
         pageCount: 10,

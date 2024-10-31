@@ -22,13 +22,39 @@ import {
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
+    AlertCircle,
     ArrowDown,
     ArrowUp,
     ArrowUpDown,
     ChevronLeft,
     ChevronRight,
+    Loader,
+    Loader2,
+    Loader2Icon,
+    LoaderCircle,
+    LoaderIcon,
+    LoaderPinwheel,
+    LocateFixed,
+    LucideLoader,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+
+export const SpinnerIcon = ({ ...props }) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="1.05em"
+        height="1em"
+        viewBox="0 0 25 24"
+        {...props}
+    >
+        <path
+            fill="currentColor"
+            d="M4.818 6.664h-.001a1.847 1.847 0 1 1 1.306-.541a1.77 1.77 0 0 1-1.277.541h-.029zm-2.97 7.182h-.001a1.847 1.847 0 1 1 1.306-.541a1.77 1.77 0 0 1-1.278.541h-.031h.002zM12 3.692a1.847 1.847 0 1 1 1.306-.541a1.77 1.77 0 0 1-1.277.541zM4.818 21.029h-.001a1.847 1.847 0 1 1 1.306-.541a1.77 1.77 0 0 1-1.276.541h-.031zM19.182 7.125a2.308 2.308 0 1 1 0-4.615a2.308 2.308 0 0 1 0 4.615M12 24a1.847 1.847 0 1 1 1.306-.541a1.77 1.77 0 0 1-1.277.541zm10.154-9.231h-.048c-.75 0-1.428-.309-1.913-.807l-.001-.001c-.499-.503-.808-1.196-.808-1.961s.308-1.458.808-1.962a2.66 2.66 0 0 1 1.914-.808h.05h-.003h.048c.75 0 1.427.309 1.913.807l.001.001c.499.503.808 1.196.808 1.961s-.308 1.458-.808 1.962a2.66 2.66 0 0 1-1.915.809h-.049zm-2.971 7.643h-.05a3.1 3.1 0 0 1-2.236-.951l-.001-.001c-.584-.584-.945-1.391-.945-2.283s.361-1.698.945-2.283a3.1 3.1 0 0 1 2.234-.945h.054h-.003h.042c.877 0 1.67.362 2.237.944l.001.001c.588.582.952 1.39.952 2.283s-.364 1.7-.952 2.282a3.1 3.1 0 0 1-2.24.953h-.04z"
+        />
+    </svg>
+);
 
 export interface SortOptions<TData> {
     sortBy: keyof TData;
@@ -41,11 +67,21 @@ export interface DatatableProps<TData> {
     onRowSelectedChange: (rowSelection: string[]) => void;
     page: number;
     pageCount: number;
-    onPageChange?: (page: number) => void;
     sorting: SortingState;
     setSorting: Dispatch<SetStateAction<SortingState>>;
     getRowId: TableOptions<TData>['getRowId'];
+    onPageChange?: (page: number) => void;
+    isFetching?: boolean;
+    isError?: boolean;
 }
+
+const ErrorMessage = ({ message }: { message: string }) => (
+    <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>{message}</AlertDescription>
+    </Alert>
+);
 
 export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
     const {
@@ -56,6 +92,8 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
         pageCount,
         onPageChange,
         getRowId,
+        isFetching = false,
+        isError = false,
     } = dataTableProps;
 
     const columnsWithMultiSelect = useMemo(
@@ -204,8 +242,29 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
                         ))}
                     </TableHeader>
 
-                    <TableBody>
-                        {table.getRowModel().rows?.length ? (
+                    <TableBody className="">
+                        {isError ? (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columnsWithMultiSelect.length}
+                                    className="p-4"
+                                >
+                                    <ErrorMessage
+                                        message={'Failed to load the data'}
+                                    />
+                                </TableCell>
+                            </TableRow>
+                        ) : isFetching ? (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columnsWithMultiSelect.length}
+                                >
+                                    <div className="w-full min-h-80 flex justify-center items-center ">
+                                        <SpinnerIcon className="animate-spin h-8 w-8 m-auto" />
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        ) : table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map(row => (
                                 <TableRow
                                     key={row.id}
