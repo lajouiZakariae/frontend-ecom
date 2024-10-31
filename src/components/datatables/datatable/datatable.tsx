@@ -1,24 +1,15 @@
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
-import ReactPaginate from 'react-paginate';
 import {
     ColumnDef,
     flexRender,
     getCoreRowModel,
     PaginationState,
-    RowSelectionState,
     SortingState,
+    TableOptions,
     useReactTable,
 } from '@tanstack/react-table';
 
-import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from '@/components/ui/pagination';
+import { PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 
 import {
     Table,
@@ -37,7 +28,7 @@ import {
     ChevronLeft,
     ChevronRight,
 } from 'lucide-react';
-import { getPaginationLinksObjects } from '@/lib/get-object-pagination-links';
+import { Input } from '@/components/ui/input';
 
 export interface SortOptions<TData> {
     sortBy: keyof TData;
@@ -47,12 +38,13 @@ export interface SortOptions<TData> {
 export interface DatatableProps<TData> {
     columns: ColumnDef<TData>[];
     data: TData[];
-    onRowSelectedChange: (rowSelection: RowSelectionState) => void;
+    onRowSelectedChange: (rowSelection: string[]) => void;
     page: number;
     pageCount: number;
     onPageChange?: (page: number) => void;
     sorting: SortingState;
     setSorting: Dispatch<SetStateAction<SortingState>>;
+    getRowId: TableOptions<TData>['getRowId'];
 }
 
 export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
@@ -63,6 +55,7 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
         page,
         pageCount,
         onPageChange,
+        getRowId,
     } = dataTableProps;
 
     const columnsWithMultiSelect = useMemo(
@@ -115,13 +108,18 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
         getCoreRowModel: getCoreRowModel(),
         onPaginationChange: setPagination,
         onSortingChange: setSorting,
+        getRowId: getRowId,
         manualPagination: true,
         manualSorting: true,
         enableMultiSort: true,
     });
 
     useEffect(() => {
-        onRowSelectedChange?.(rowSelection);
+        onRowSelectedChange?.(
+            Object.entries(rowSelection)
+                .filter(([, value]) => value === true)
+                .map(([key]) => key)
+        );
     }, [rowSelection]);
 
     useEffect(() => {
@@ -139,10 +137,30 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
         }[sortintState];
     };
 
-    const paginationLinksObjects = getPaginationLinksObjects(
-        pagination.pageIndex + 1,
-        8
-    );
+    const [paginationInputValue, setPaginationInputValue] = useState('');
+
+    const applyPagination = (page: number) => {
+        const pageCount = table.getPageCount();
+
+        if (page < 0) {
+            setPaginationInputValue('1');
+            setPagination(prev => ({
+                ...prev,
+                pageIndex: 1,
+            }));
+        } else if (page >= pageCount) {
+            setPaginationInputValue(String(pageCount));
+            setPagination(prev => ({
+                ...prev,
+                pageIndex: pageCount,
+            }));
+        } else {
+            setPagination(prev => ({
+                ...prev,
+                pageIndex: page,
+            }));
+        }
+    };
 
     return (
         <>
@@ -219,76 +237,53 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
                 </Table>
             </div>
 
-            {/* Pagination */}
-            <div className="mt-4 flex justify-between items-center">
-                <div>
-                    {Object.keys(rowSelection).length} of{' '}
-                    {table.getPreFilteredRowModel().rows.length} row(s)
-                    selected.
+            <div className="mt-4 flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0 sm:space-x-4">
+                <div className="flex items-center space-x-2">
+                    <PaginationPrevious>
+                        <Button
+                            variant="outline"
+                            className="h-8 w-8 p-0"
+                            onClick={() => table.previousPage()}
+                            disabled={!table.getCanPreviousPage()}
+                        >
+                            <span className="sr-only">Go to previous page</span>
+                            <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                    </PaginationPrevious>
+
+                    <span className="text-sm font-medium">
+                        Page {pagination.pageIndex} of {table.getPageCount()}
+                    </span>
+
+                    <PaginationNext>
+                        <Button
+                            variant="outline"
+                            className="h-8 w-8 p-0"
+                            onClick={() => table.nextPage()}
+                            disabled={!table.getCanNextPage()}
+                        >
+                            <span className="sr-only">Go to next page</span>
+                            <ChevronRight className="h-4 w-4" />
+                        </Button>
+                    </PaginationNext>
                 </div>
-                <div>
-                    <Pagination>
-                        <PaginationContent>
-                            {/* Previous Button */}
-                            <PaginationPrevious>
-                                <Button
-                                    variant="outline"
-                                    className="h-8 w-8 p-0"
-                                    onClick={() => table.previousPage()}
-                                    disabled={!table.getCanPreviousPage()}
-                                >
-                                    <span className="sr-only">
-                                        Go to previous page
-                                    </span>
-                                    <ChevronLeft className="h-4 w-4" />
-                                </Button>
-                            </PaginationPrevious>
-
-                            {/* Pagination Links */}
-                            {paginationLinksObjects.map((linkObj, index) => (
-                                <PaginationItem key={index}>
-                                    {linkObj.isSeperator ? (
-                                        <PaginationEllipsis className="bg-opacity-60">
-                                            {linkObj.link}
-                                        </PaginationEllipsis>
-                                    ) : (
-                                        <PaginationLink>
-                                            <Button
-                                                variant={
-                                                    linkObj.active
-                                                        ? 'default'
-                                                        : 'ghost'
-                                                }
-                                                className="h-8 w-8 p-0"
-                                                onClick={() =>
-                                                    table.setPageIndex(
-                                                        Number(linkObj.link) - 1
-                                                    )
-                                                }
-                                            >
-                                                {linkObj.link}
-                                            </Button>
-                                        </PaginationLink>
-                                    )}
-                                </PaginationItem>
-                            ))}
-
-                            {/* Next Button */}
-                            <PaginationNext>
-                                <Button
-                                    variant="outline"
-                                    className="h-8 w-8 p-0"
-                                    onClick={() => table.nextPage()}
-                                    disabled={!table.getCanNextPage()}
-                                >
-                                    <span className="sr-only">
-                                        Go to next page
-                                    </span>
-                                    <ChevronRight className="h-4 w-4" />
-                                </Button>
-                            </PaginationNext>
-                        </PaginationContent>
-                    </Pagination>
+                <div className="flex items-center space-x-2">
+                    <Input
+                        type="number"
+                        placeholder="Page"
+                        value={paginationInputValue}
+                        onChange={e => setPaginationInputValue(e.target.value)}
+                        className="w-20"
+                        min={1}
+                        max={table.getPageCount()}
+                    />
+                    <Button
+                        onClick={() =>
+                            applyPagination(Number(paginationInputValue) - 1)
+                        }
+                    >
+                        Go
+                    </Button>
                 </div>
             </div>
         </>

@@ -2,8 +2,6 @@ import { ColumnDef, SortingState } from '@tanstack/react-table';
 
 import { MoreHorizontal, Trash, Edit } from 'lucide-react';
 
-import { Checkbox } from '@/components/ui/checkbox';
-
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -105,6 +103,7 @@ function TableView() {
         setSorting,
         page,
         pageCount: 10,
+        getRowId: row => row.id.toString(),
         onPageChange: page => {
             setPage(page);
             console.log(page);
