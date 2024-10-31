@@ -9,8 +9,6 @@ import {
     useReactTable,
 } from '@tanstack/react-table';
 
-import { PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
-
 import {
     Table,
     TableBody,
@@ -28,33 +26,11 @@ import {
     ArrowUpDown,
     ChevronLeft,
     ChevronRight,
-    Loader,
-    Loader2,
-    Loader2Icon,
-    LoaderCircle,
-    LoaderIcon,
-    LoaderPinwheel,
-    LocateFixed,
-    LucideLoader,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
-export const SpinnerIcon = ({ ...props }) => (
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="1.05em"
-        height="1em"
-        viewBox="0 0 25 24"
-        {...props}
-    >
-        <path
-            fill="currentColor"
-            d="M4.818 6.664h-.001a1.847 1.847 0 1 1 1.306-.541a1.77 1.77 0 0 1-1.277.541h-.029zm-2.97 7.182h-.001a1.847 1.847 0 1 1 1.306-.541a1.77 1.77 0 0 1-1.278.541h-.031h.002zM12 3.692a1.847 1.847 0 1 1 1.306-.541a1.77 1.77 0 0 1-1.277.541zM4.818 21.029h-.001a1.847 1.847 0 1 1 1.306-.541a1.77 1.77 0 0 1-1.276.541h-.031zM19.182 7.125a2.308 2.308 0 1 1 0-4.615a2.308 2.308 0 0 1 0 4.615M12 24a1.847 1.847 0 1 1 1.306-.541a1.77 1.77 0 0 1-1.277.541zm10.154-9.231h-.048c-.75 0-1.428-.309-1.913-.807l-.001-.001c-.499-.503-.808-1.196-.808-1.961s.308-1.458.808-1.962a2.66 2.66 0 0 1 1.914-.808h.05h-.003h.048c.75 0 1.427.309 1.913.807l.001.001c.499.503.808 1.196.808 1.961s-.308 1.458-.808 1.962a2.66 2.66 0 0 1-1.915.809h-.049zm-2.971 7.643h-.05a3.1 3.1 0 0 1-2.236-.951l-.001-.001c-.584-.584-.945-1.391-.945-2.283s.361-1.698.945-2.283a3.1 3.1 0 0 1 2.234-.945h.054h-.003h.042c.877 0 1.67.362 2.237.944l.001.001c.588.582.952 1.39.952 2.283s-.364 1.7-.952 2.282a3.1 3.1 0 0 1-2.24.953h-.04z"
-        />
-    </svg>
-);
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { SpinnerIcon } from '@/components/icons';
 
 export interface SortOptions<TData> {
     sortBy: keyof TData;
@@ -298,33 +274,29 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
 
             <div className="mt-4 flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0 sm:space-x-4">
                 <div className="flex items-center space-x-2">
-                    <PaginationPrevious>
-                        <Button
-                            variant="outline"
-                            className="h-8 w-8 p-0"
-                            onClick={() => table.previousPage()}
-                            disabled={!table.getCanPreviousPage()}
-                        >
-                            <span className="sr-only">Go to previous page</span>
-                            <ChevronLeft className="h-4 w-4" />
-                        </Button>
-                    </PaginationPrevious>
+                    <Button
+                        variant="outline"
+                        className="h-8 w-8 p-0"
+                        onClick={() => table.previousPage()}
+                        disabled={!table.getCanPreviousPage()}
+                    >
+                        <span className="sr-only">Go to previous page</span>
+                        <ChevronLeft className="h-4 w-4" />
+                    </Button>
 
                     <span className="text-sm font-medium">
                         Page {pagination.pageIndex} of {table.getPageCount()}
                     </span>
 
-                    <PaginationNext>
-                        <Button
-                            variant="outline"
-                            className="h-8 w-8 p-0"
-                            onClick={() => table.nextPage()}
-                            disabled={!table.getCanNextPage()}
-                        >
-                            <span className="sr-only">Go to next page</span>
-                            <ChevronRight className="h-4 w-4" />
-                        </Button>
-                    </PaginationNext>
+                    <Button
+                        variant="outline"
+                        className="h-8 w-8 p-0"
+                        onClick={() => table.nextPage()}
+                        disabled={!table.getCanNextPage()}
+                    >
+                        <span className="sr-only">Go to next page</span>
+                        <ChevronRight className="h-4 w-4" />
+                    </Button>
                 </div>
                 <div className="flex items-center space-x-2">
                     <Input
