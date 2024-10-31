@@ -5,7 +5,7 @@ import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import LoginView from './views/login-view.tsx';
 import store from './store/index.tsx';
 import { Provider } from 'react-redux';
-import ProductsView from './views/products-view.tsx';
+import UsersView from './views/users-view.tsx';
 import { Dashboard } from './layouts/dashboard/dashboard.tsx';
 import { AuthenticationInitializer } from './features/auth/components/init-auth.tsx';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -22,12 +22,12 @@ const router = createBrowserRouter([
         ),
         children: [
             {
-                path: '/form',
-                Component: FormView,
+                path: '/users',
+                Component: UsersView,
             },
             {
-                path: '/products',
-                Component: ProductsView,
+                path: '/form',
+                Component: FormView,
             },
         ],
     },

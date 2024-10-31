@@ -68,6 +68,8 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
         pageCount,
         onPageChange,
         getRowId,
+        sorting,
+        setSorting,
         isFetching = false,
         isError = false,
     } = dataTableProps;
@@ -102,12 +104,14 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
 
     const [rowSelection, setRowSelection] = useState({});
 
-    const [sorting, setSorting] = useState<SortingState>([]);
-
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: page,
         pageSize: pageCount,
     });
+
+    const handlePageChange = () => {
+        onPageChange?.(pagination.pageIndex + 1);
+    };
 
     const table = useReactTable({
         data,
@@ -120,7 +124,10 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
         },
         onRowSelectionChange: setRowSelection,
         getCoreRowModel: getCoreRowModel(),
-        onPaginationChange: setPagination,
+        onPaginationChange: page => {
+            handlePageChange();
+            return setPagination(page);
+        },
         onSortingChange: setSorting,
         getRowId: getRowId,
         manualPagination: true,
@@ -135,10 +142,6 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
                 .map(([key]) => key)
         );
     }, [rowSelection]);
-
-    useEffect(() => {
-        onPageChange?.(pagination.pageIndex + 1);
-    }, [pagination.pageIndex]);
 
     const renderSortingIcon = (sortintState: 'asc' | 'desc' | false) => {
         if (sortintState === false) {
