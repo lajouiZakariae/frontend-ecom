@@ -1,3 +1,15 @@
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
+import ReactPaginate from 'react-paginate';
+import {
+    ColumnDef,
+    flexRender,
+    getCoreRowModel,
+    PaginationState,
+    RowSelectionState,
+    SortingState,
+    useReactTable,
+} from '@tanstack/react-table';
+
 import {
     Pagination,
     PaginationContent,
@@ -8,16 +20,6 @@ import {
     PaginationPrevious,
 } from '@/components/ui/pagination';
 
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
-import {
-    ColumnDef,
-    flexRender,
-    getCoreRowModel,
-    PaginationState,
-    RowSelectionState,
-    SortingState,
-    useReactTable,
-} from '@tanstack/react-table';
 import {
     Table,
     TableBody,
@@ -35,6 +37,7 @@ import {
     ChevronLeft,
     ChevronRight,
 } from 'lucide-react';
+import { getPaginationLinksObjects } from '@/lib/get-object-pagination-links';
 
 export interface SortOptions<TData> {
     sortBy: keyof TData;
@@ -121,6 +124,10 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
         onRowSelectedChange?.(rowSelection);
     }, [rowSelection]);
 
+    useEffect(() => {
+        onPageChange?.(pagination.pageIndex + 1);
+    }, [pagination.pageIndex]);
+
     const renderSortingIcon = (sortintState: 'asc' | 'desc' | false) => {
         if (sortintState === false) {
             return <ArrowUpDown className="size-4" />;
@@ -131,6 +138,11 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
             desc: <ArrowUp className="size-4" />,
         }[sortintState];
     };
+
+    const paginationLinksObjects = getPaginationLinksObjects(
+        pagination.pageIndex + 1,
+        8
+    );
 
     return (
         <>
@@ -207,6 +219,7 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
                 </Table>
             </div>
 
+            {/* Pagination */}
             <div className="mt-4 flex justify-between items-center">
                 <div>
                     {Object.keys(rowSelection).length} of{' '}
@@ -216,7 +229,8 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
                 <div>
                     <Pagination>
                         <PaginationContent>
-                            <PaginationItem>
+                            {/* Previous Button */}
+                            <PaginationPrevious>
                                 <Button
                                     variant="outline"
                                     className="h-8 w-8 p-0"
@@ -228,41 +242,39 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
                                     </span>
                                     <ChevronLeft className="h-4 w-4" />
                                 </Button>
-                            </PaginationItem>
+                            </PaginationPrevious>
 
-                            {/* <PaginationItem>
-                                <PaginationLink
-                                    href="#"
-                                    isActive={ === 1}
-                                >
-                                    1
-                                </PaginationLink>
-                            </PaginationItem> */}
-
-                            {/* {currentPage > 3 && <PaginationEllipsis />}
-
-                            {currentPage > 2 && currentPage < totalPages && (
-                                <PaginationItem>
-                                    <PaginationLink href="#" isActive>
-                                        {currentPage}
-                                    </PaginationLink>
+                            {/* Pagination Links */}
+                            {paginationLinksObjects.map((linkObj, index) => (
+                                <PaginationItem key={index}>
+                                    {linkObj.isSeperator ? (
+                                        <PaginationEllipsis className="bg-opacity-60">
+                                            {linkObj.link}
+                                        </PaginationEllipsis>
+                                    ) : (
+                                        <PaginationLink>
+                                            <Button
+                                                variant={
+                                                    linkObj.active
+                                                        ? 'default'
+                                                        : 'ghost'
+                                                }
+                                                className="h-8 w-8 p-0"
+                                                onClick={() =>
+                                                    table.setPageIndex(
+                                                        Number(linkObj.link) - 1
+                                                    )
+                                                }
+                                            >
+                                                {linkObj.link}
+                                            </Button>
+                                        </PaginationLink>
+                                    )}
                                 </PaginationItem>
-                            )}
+                            ))}
 
-                            {currentPage < totalPages - 1 && (
-                                <PaginationEllipsis />
-                            )} */}
-
-                            {/* <PaginationItem>
-                                <PaginationLink
-                                    href="#"
-                                    isActive={currentPage === totalPages}
-                                >
-                                    {totalPages}
-                                </PaginationLink>
-                            </PaginationItem> */}
-
-                            <PaginationItem>
+                            {/* Next Button */}
+                            <PaginationNext>
                                 <Button
                                     variant="outline"
                                     className="h-8 w-8 p-0"
@@ -274,21 +286,7 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
                                     </span>
                                     <ChevronRight className="h-4 w-4" />
                                 </Button>
-                            </PaginationItem>
-                            {/* <PaginationItem>
-                                <Button
-                                    variant="outline"
-                                    className="hidden h-8 w-8 p-0 lg:flex"
-                                    onClick={()=>table.lastPage()}
-                                    disabled={!canNextPage}
-                                >
-                                    <span className="sr-only">
-                                        Go to last page
-                                    </span>
-                                    <ChevronsRight className="h-4 w-4" />
-                                </Button>
-                            </PaginationItem>
-                                 */}
+                            </PaginationNext>
                         </PaginationContent>
                     </Pagination>
                 </div>

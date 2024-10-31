@@ -109,7 +109,9 @@ function TableView() {
             setPage(page);
             console.log(page);
         },
-        onRowSelectedChange: selectedRows => {},
+        onRowSelectedChange: selectedRows => {
+            console.log(selectedRows);
+        },
     };
 
     return (
