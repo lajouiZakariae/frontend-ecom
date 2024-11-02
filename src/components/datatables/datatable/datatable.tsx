@@ -105,13 +105,9 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
     const [rowSelection, setRowSelection] = useState({});
 
     const [pagination, setPagination] = useState<PaginationState>({
-        pageIndex: page,
+        pageIndex: page - 1,
         pageSize: pageCount,
     });
-
-    const handlePageChange = () => {
-        onPageChange?.(pagination.pageIndex + 1);
-    };
 
     const table = useReactTable({
         data,
@@ -124,10 +120,7 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
         },
         onRowSelectionChange: setRowSelection,
         getCoreRowModel: getCoreRowModel(),
-        onPaginationChange: page => {
-            handlePageChange();
-            return setPagination(page);
-        },
+        onPaginationChange: setPagination,
         onSortingChange: setSorting,
         getRowId: getRowId,
         manualPagination: true,
@@ -136,12 +129,22 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
     });
 
     useEffect(() => {
+        onPageChange?.(pagination.pageIndex + 1);
+    }, [pagination.pageIndex]);
+
+    useEffect(() => {
         onRowSelectedChange?.(
             Object.entries(rowSelection)
                 .filter(([, value]) => value === true)
                 .map(([key]) => key)
         );
     }, [rowSelection]);
+
+    const [paginationInputValue, setPaginationInputValue] = useState('');
+
+    const applyPagination = (page: number) => {
+        table.setPageIndex(page);
+    };
 
     const renderSortingIcon = (sortintState: 'asc' | 'desc' | false) => {
         if (sortintState === false) {
@@ -152,31 +155,6 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
             asc: <ArrowDown className="size-4" />,
             desc: <ArrowUp className="size-4" />,
         }[sortintState];
-    };
-
-    const [paginationInputValue, setPaginationInputValue] = useState('');
-
-    const applyPagination = (page: number) => {
-        const pageCount = table.getPageCount();
-
-        if (page < 0) {
-            setPaginationInputValue('1');
-            setPagination(prev => ({
-                ...prev,
-                pageIndex: 1,
-            }));
-        } else if (page >= pageCount) {
-            setPaginationInputValue(String(pageCount));
-            setPagination(prev => ({
-                ...prev,
-                pageIndex: pageCount,
-            }));
-        } else {
-            setPagination(prev => ({
-                ...prev,
-                pageIndex: page,
-            }));
-        }
     };
 
     return (
@@ -288,7 +266,8 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
                     </Button>
 
                     <span className="text-sm font-medium">
-                        Page {pagination.pageIndex} of {table.getPageCount()}
+                        Page {pagination.pageIndex + 1} of{' '}
+                        {table.getPageCount()}
                     </span>
 
                     <Button
@@ -301,24 +280,28 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
                         <ChevronRight className="h-4 w-4" />
                     </Button>
                 </div>
-                <div className="flex items-center space-x-2">
-                    <Input
-                        type="number"
-                        placeholder="Page"
-                        value={paginationInputValue}
-                        onChange={e => setPaginationInputValue(e.target.value)}
-                        className="w-20"
-                        min={1}
-                        max={table.getPageCount()}
-                    />
-                    <Button
-                        onClick={() =>
-                            applyPagination(Number(paginationInputValue) - 1)
-                        }
-                    >
-                        Go
-                    </Button>
-                </div>
+                <form
+                    onSubmit={ev => {
+                        ev.preventDefault();
+                        applyPagination(Number(paginationInputValue) - 1);
+                    }}
+                >
+                    <div className="flex items-center space-x-2">
+                        <Input
+                            type="number"
+                            placeholder="Page"
+                            value={paginationInputValue}
+                            onChange={e =>
+                                setPaginationInputValue(e.target.value)
+                            }
+                            className="w-20"
+                            min={1}
+                            max={table.getPageCount()}
+                        />
+
+                        <Button type="submit">Go</Button>
+                    </div>
+                </form>
             </div>
         </>
     );

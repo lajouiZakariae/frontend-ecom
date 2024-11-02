@@ -17,27 +17,8 @@ import { usePagination } from '@/hooks/use-pagination';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { UserService } from '@/features/users/service';
-
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from '@/components/ui/popover';
-
-import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList,
-    CommandSeparator,
-} from '@/components/ui/command';
-import { cn } from '@/lib/utils';
-import { CheckIcon, PlusCircledIcon } from '@radix-ui/react-icons';
-import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
 import { useTranslation } from 'react-i18next';
+import { Filter } from '@/components/filters/filter';
 
 type User = {
     id: number;
@@ -123,7 +104,6 @@ const UsersView = () => {
 
     const order = sorting.at(0)?.desc ? 'desc' : 'asc';
 
-    // Handle Quering the data
     const usersQuery = useQuery({
         queryKey: ['users', { page, sortBy, order }],
         queryFn: async () =>
@@ -144,7 +124,7 @@ const UsersView = () => {
         sorting,
         setSorting,
         page,
-        pageCount: 10,
+        pageCount: usersQuery.data?.meta.last_page || 1,
         getRowId: row => row.id.toString(),
         onPageChange: setPage,
         onRowSelectedChange: selectedRows => {
@@ -157,158 +137,20 @@ const UsersView = () => {
         { label: 'Banned', value: 'banned' },
     ];
 
-    const [filters, setFilters] = useState({
-        statusOptions: [statusOptions[0]],
-    });
+    const [selectedOptions, setSelectedOptions] = useState<
+        typeof statusOptions
+    >([]);
 
     return (
         <div className="w-full">
             <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                    <Popover>
-                        <PopoverTrigger asChild>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="h-8 border-dashed"
-                            >
-                                <PlusCircledIcon className="mr-2 h-4 w-4" />
-                                {t('Status')}
-
-                                {filters.statusOptions?.length > 0 && (
-                                    <Separator
-                                        orientation="vertical"
-                                        className="mx-2 h-4"
-                                    />
-                                )}
-
-                                {filters.statusOptions?.length > 0 &&
-                                    filters.statusOptions.map(status => (
-                                        <Badge
-                                            variant="secondary"
-                                            className="rounded-sm px-1 font-normal lg:hidden"
-                                        >
-                                            {t(status.label)}
-                                        </Badge>
-                                    ))}
-
-                                <div className="hidden space-x-1 lg:flex">
-                                    {/* {"selectedValues.size" > 2 ? (
-                                            <Badge
-                                                variant="secondary"
-                                                className="rounded-sm px-1 font-normal"
-                                            >
-                                                {selectedValues.size} selected
-                                            </Badge>
-                                        ) : (
-                                            options
-                                                .filter(option =>
-                                                    selectedValues.has(
-                                                        option.value
-                                                    )
-                                                )
-                                                .map(option => (
-                                                    <Badge
-                                                        variant="secondary"
-                                                        key={option.value}
-                                                        className="rounded-sm px-1 font-normal"
-                                                    >
-                                                        {option.label}
-                                                    </Badge>
-                                                ))
-                                        )} */}
-                                </div>
-                            </Button>
-                        </PopoverTrigger>
-
-                        <PopoverContent className="w-[200px] p-0" align="start">
-                            <Command>
-                                <CommandInput placeholder={t('Status')} />
-
-                                <CommandList>
-                                    <CommandEmpty>
-                                        No results found.
-                                    </CommandEmpty>
-
-                                    <CommandGroup>
-                                        {statusOptions.map(option => {
-                                            const isSelected =
-                                                filters.statusOptions.find(
-                                                    ({ value }) =>
-                                                        option.value === value
-                                                );
-
-                                            return (
-                                                <CommandItem
-                                                    key={option.value}
-                                                    onSelect={() => {
-                                                        if (isSelected) {
-                                                            setFilters(
-                                                                prev => ({
-                                                                    ...prev,
-                                                                    statusOptions:
-                                                                        prev.statusOptions.filter(
-                                                                            ({
-                                                                                value,
-                                                                            }) =>
-                                                                                option.value !==
-                                                                                value
-                                                                        ),
-                                                                })
-                                                            );
-                                                        } else {
-                                                            setFilters(
-                                                                prev => ({
-                                                                    ...prev,
-                                                                    statusOptions:
-                                                                        [
-                                                                            ...prev.statusOptions,
-                                                                            option,
-                                                                        ],
-                                                                })
-                                                            );
-                                                        }
-                                                    }}
-                                                >
-                                                    <div
-                                                        className={cn(
-                                                            'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
-                                                            isSelected
-                                                                ? 'bg-primary text-primary-foreground'
-                                                                : 'opacity-50 [&_svg]:invisible'
-                                                        )}
-                                                    >
-                                                        <CheckIcon
-                                                            className={cn(
-                                                                'h-4 w-4'
-                                                            )}
-                                                        />
-                                                    </div>
-                                                    <span>
-                                                        {t(option.label)}
-                                                    </span>
-                                                </CommandItem>
-                                            );
-                                        })}
-                                    </CommandGroup>
-                                    <CommandSeparator />
-                                    <CommandGroup>
-                                        <CommandItem
-                                            onSelect={() =>
-                                                setFilters(prev => ({
-                                                    ...prev,
-                                                    statusOptions: [],
-                                                }))
-                                            }
-                                            className="justify-center text-center"
-                                        >
-                                            Clear filters
-                                        </CommandItem>
-                                    </CommandGroup>
-                                </CommandList>
-                            </Command>
-                        </PopoverContent>
-                    </Popover>
+                    <Filter
+                        options={statusOptions}
+                        title={t('Status')}
+                        selectedOptions={selectedOptions}
+                        setSelectedOptions={setSelectedOptions}
+                    />
                 </div>
 
                 <Button
