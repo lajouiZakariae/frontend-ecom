@@ -1,13 +1,13 @@
 import { Form, FormikContextType, FormikProvider } from 'formik'
 import { Button } from '@/components/ui/button'
 import { TextFieldGroup } from '@/components/form-fields/text-field-group'
-import { UserFormValues } from '../types'
+import { CustomerFormValues } from '../types'
 
-interface UserFormProps extends FormikContextType<UserFormValues> {
+interface CustomerFormProps extends FormikContextType<CustomerFormValues> {
     actionTitle: string
 }
 
-export const UserForm = ({ actionTitle, ...formik }: UserFormProps) => (
+export const CustomerForm = ({ actionTitle, ...formik }: CustomerFormProps) => (
     <FormikProvider value={formik}>
         <Form className='space-y-4'>
             <div className='grid grid-cols-2 gap-4'>

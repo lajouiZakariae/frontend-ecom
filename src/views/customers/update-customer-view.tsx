@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { LoadingCustomerForm } from '@/features/users/components/loading-customer-form'
-import { UpdateUserForm } from '@/features/users/components/update-user-form'
-import { customerQueryOptions } from '@/features/users/query-options'
+import { LoadingCustomerForm } from '@/features/customers/components/loading-customer-form'
+import { UpdateCustomerForm } from '@/features/customers/components/update-customer-form'
+import { customerQueryOptions } from '@/features/customers/query-options'
 import { useQuery } from '@tanstack/react-query'
 import { ArrowLeft } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -31,7 +31,7 @@ const UpdateCustomerView = () => {
                 {customerUserQuery.isPending ? (
                     <LoadingCustomerForm />
                 ) : (
-                    <UpdateUserForm customer={customerUserQuery.data.data} />
+                    <UpdateCustomerForm customer={customerUserQuery.data.data} />
                 )}
             </Card>
         </div>

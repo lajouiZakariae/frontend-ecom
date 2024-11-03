@@ -1,4 +1,4 @@
-export interface UserFormValues {
+export interface CustomerFormValues {
     first_name: string
     last_name: string
     email: string

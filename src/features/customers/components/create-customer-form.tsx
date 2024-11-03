@@ -1,13 +1,13 @@
-import { UserForm } from '@/features/users/components/user-form'
-import { customerQueryKeys } from '@/features/users/query-options'
-import { CustomerService } from '@/features/users/service'
-import { UserFormValues } from '@/features/users/types'
+import { CustomerForm } from '@/features/customers/components/customer-form'
+import { customerQueryKeys } from '@/features/customers/query-options'
+import { CustomerService } from '@/features/customers/service'
+import { CustomerFormValues } from '@/features/customers/types'
 import { useMutation } from '@tanstack/react-query'
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
-export const CreateUserForm = () => {
+export const CreateCustomerForm = () => {
     const { t } = useTranslation()
 
     const navigate = useNavigate()
@@ -22,7 +22,7 @@ export const CreateUserForm = () => {
         },
     })
 
-    const formik = useFormik<UserFormValues>({
+    const formik = useFormik<CustomerFormValues>({
         initialValues: {
             first_name: '',
             last_name: '',
@@ -33,5 +33,5 @@ export const CreateUserForm = () => {
         onSubmit: async values => await createCustomerMutation.mutateAsync(values),
     })
 
-    return <UserForm actionTitle={formik.isSubmitting ? t('Creating User...') : t('Create User')} {...formik} />
+    return <CustomerForm actionTitle={formik.isSubmitting ? t('Creating User...') : t('Create User')} {...formik} />
 }

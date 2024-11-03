@@ -15,7 +15,7 @@ export class CustomerService {
         return await apiClient.put(`users/${id}`, data)
     }
 
-    static async getCustomerById(customerId: string) {
+    static async getCustomerById(customerId: number) {
         const { data } = await apiClient.get(`users/${customerId}`)
         return data
     }

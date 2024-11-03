@@ -1,11 +1,11 @@
-import { CustomersDatatable } from '@/features/users/components/customer-datatable'
-import { useDocumentTitle } from '@uidotdev/usehooks'
+import { CustomersDatatable } from '@/features/customers/components/customer-datatable'
+import { useSetDocumentTitle } from '@/hooks/use-set-document-title'
 import { useTranslation } from 'react-i18next'
 
 const CustomersView = () => {
     const { t } = useTranslation()
 
-    useDocumentTitle(t('Customers'))
+    useSetDocumentTitle(t('Customers'))
 
     return <CustomersDatatable />
 }

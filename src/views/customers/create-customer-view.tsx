@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { CreateUserForm } from '@/features/users/components/create-user-form'
+import { CreateCustomerForm } from '@/features/customers/components/create-customer-form'
 import { ArrowLeft } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
@@ -21,7 +21,7 @@ const CreateCustomerView = () => {
             </div>
 
             <Card className='w-full p-4'>
-                <CreateUserForm />
+                <CreateCustomerForm />
             </Card>
         </div>
     )
