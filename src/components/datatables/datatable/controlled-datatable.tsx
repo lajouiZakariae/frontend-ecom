@@ -33,6 +33,7 @@ export interface ControlledDatatableProps<TData> {
     setSorting: Dispatch<SetStateAction<SortingState>>
     getRowId: TableOptions<TData>['getRowId']
     onPageChange?: (page: number) => void
+    noResultsMessage?: string
     isFetching?: boolean
     isError?: boolean
 }
@@ -56,6 +57,7 @@ export const ControlledDataTable = <TData,>(dataTableProps: ControlledDatatableP
         getRowId,
         sorting,
         setSorting,
+        noResultsMessage = 'No results',
         isFetching = false,
         isError = false,
     } = dataTableProps
@@ -170,7 +172,7 @@ export const ControlledDataTable = <TData,>(dataTableProps: ControlledDatatableP
                         ))}
                     </TableHeader>
 
-                    <TableBody className=''>
+                    <TableBody>
                         {isError ? (
                             <TableRow>
                                 <TableCell colSpan={columnsWithMultiSelect.length} className='p-4'>
@@ -198,7 +200,7 @@ export const ControlledDataTable = <TData,>(dataTableProps: ControlledDatatableP
                         ) : (
                             <TableRow>
                                 <TableCell colSpan={columns.length} className='h-24 text-center'>
-                                    No results.
+                                    {noResultsMessage}
                                 </TableCell>
                             </TableRow>
                         )}

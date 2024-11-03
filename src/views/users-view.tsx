@@ -20,6 +20,7 @@ import { UserService } from '@/features/users/service'
 import { useTranslation } from 'react-i18next'
 import { MultiSelectDropdownFilter } from '@/components/filters/multi-select-dropdown-filter'
 import { useUsersSorting } from '@/features/users/hooks/use-users-sorting'
+import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog'
 
 type User = {
     id: number
@@ -126,6 +127,7 @@ const UsersView = () => {
         data: usersQuery.data?.data || data,
         isError: usersQuery.isError,
         isFetching: usersQuery.isLoading,
+        noResultsMessage: t('No users found'),
         sorting,
         setSorting,
         page,
@@ -136,6 +138,8 @@ const UsersView = () => {
             setSelectedRows(selectedRows.map(Number))
         },
     }
+
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
     return (
         <div className='w-full rounded-md bg-white p-4 shadow-lg'>
@@ -149,10 +153,27 @@ const UsersView = () => {
                     />
                 </div>
 
-                <Button variant='destructive' size='sm' disabled={selectedRows.length === 0}>
-                    <Trash2 className='mr-2 h-4 w-4' />
-                    {t('Delete Selected')}
-                </Button>
+                <ConfirmDeleteDialog
+                    isOpen={isDeleteDialogOpen}
+                    setIsOpen={setIsDeleteDialogOpen}
+                    button={
+                        <Button
+                            variant='destructive'
+                            size='sm'
+                            disabled={selectedRows.length === 0}
+                            onClick={() => {
+                                setIsDeleteDialogOpen(true)
+                            }}
+                        >
+                            <Trash2 className='mr-2 size-4' />
+                            {t('Delete Selected')}
+                        </Button>
+                    }
+                    onConfirm={() => {
+                        console.log('Delete', selectedRows)
+                        setIsDeleteDialogOpen(false)
+                    }}
+                />
             </div>
 
             <ControlledDataTable<User> {...dataTableProps} />
