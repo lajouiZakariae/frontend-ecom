@@ -19,6 +19,7 @@ import { useQuery } from '@tanstack/react-query'
 import { UserService } from '@/features/users/service'
 import { useTranslation } from 'react-i18next'
 import { MultiSelectDropdownFilter } from '@/components/filters/multi-select-dropdown-filter'
+import { useValidatedSortingFromURLParams } from './use-validated-sorting-from-url-params'
 
 type User = {
     id: number
@@ -45,14 +46,14 @@ const data: User[] = [
 
 const columns: ColumnDef<User>[] = [
     {
-        accessorKey: 'id',
-        header: 'ID',
-        id: 'id',
+        accessorKey: 'first_name',
+        header: 'First Name',
+        id: 'first_name',
     },
     {
-        accessorFn: row => `${row.first_name} ${row.last_name}`,
-        header: 'Full Name',
-        id: 'full_name',
+        accessorKey: 'last_name',
+        header: 'Last Name',
+        id: 'last_name',
     },
     {
         accessorKey: 'email',
@@ -94,7 +95,20 @@ const UsersView = () => {
 
     const { page, setPage } = usePagination()
 
-    const [sorting, setSorting] = useState<SortingState>([])
+    const validatedSortBy = useValidatedSortingFromURLParams({
+        allowedSortByList: ['first_name', 'last_name', 'email'],
+        defaultSortBy: 'first_name',
+        defaultOrder: 'asc',
+    })
+
+    console.log(validatedSortBy)
+
+    const [sorting, setSorting] = useState<SortingState>([
+        {
+            id: 'first_name',
+            desc: false,
+        },
+    ])
 
     const sortBy = sorting.at(0)?.id
 
@@ -150,9 +164,10 @@ const UsersView = () => {
 
                 <Button variant='destructive' size='sm' disabled={selectedRows.length === 0}>
                     <Trash2 className='mr-2 h-4 w-4' />
-                    Delete Selected
+                    {t('Delete Selected')}
                 </Button>
             </div>
+
             <ControlledDataTable<User> {...dataTableProps} />
         </div>
     )

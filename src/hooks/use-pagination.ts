@@ -9,8 +9,6 @@ export const usePagination = () => {
 
         const currentPageAsNumber = Number(currentPageFromSearchParams)
 
-        console.log('currentPageAsNumber', currentPageAsNumber)
-
         return currentPageAsNumber
     }, [urlSearchParams.get('page')])
 
