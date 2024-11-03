@@ -1,29 +1,30 @@
 import { useSearchParams } from 'react-router-dom'
 import * as Yup from 'yup'
 
-interface UseValidatedFiltersFromURLParamsOptions {
+interface GetValidatedSortingFromURLParamsOptions {
     allowedSortByList: string[]
     defaultOrder: 'asc' | 'desc'
     defaultSortBy: string
+    values: { sortBy: string; order: string }
 }
 
-export const useValidatedSortingFromURLParams = ({
+const getValidatedSortingFromURLParams = ({
     allowedSortByList,
     defaultOrder,
     defaultSortBy,
-}: UseValidatedFiltersFromURLParamsOptions) => {
-    const [searchParams] = useSearchParams()
-
-    const valuesFromURLParams = {
-        sortBy: searchParams.get('sortBy') ?? defaultSortBy,
-        order: searchParams.get('order') ?? defaultOrder,
-    }
-
+    values: { sortBy, order },
+}: GetValidatedSortingFromURLParamsOptions) => {
     try {
         const validated = Yup.object({
             sortBy: Yup.string().oneOf(allowedSortByList).required(),
             order: Yup.string().oneOf([undefined, 'asc', 'desc']).required(),
-        }).validateSync(valuesFromURLParams, { abortEarly: false })
+        }).validateSync(
+            {
+                sortBy,
+                order,
+            },
+            { abortEarly: false },
+        )
 
         return {
             sortBy: validated.sortBy,
@@ -34,8 +35,8 @@ export const useValidatedSortingFromURLParams = ({
             const fieldsWichHasError = error.inner.map(e => e.path)
 
             return {
-                sortBy: fieldsWichHasError.includes('sortBy') ? defaultSortBy : valuesFromURLParams.sortBy,
-                order: fieldsWichHasError.includes('order') ? defaultOrder : valuesFromURLParams.order,
+                sortBy: fieldsWichHasError.includes('sortBy') ? defaultSortBy : sortBy,
+                order: fieldsWichHasError.includes('order') ? defaultOrder : order,
             }
         }
 
@@ -44,4 +45,42 @@ export const useValidatedSortingFromURLParams = ({
             order: defaultOrder,
         }
     }
+}
+
+type UseValidatedFiltersFromURLParamsOptions = Omit<GetValidatedSortingFromURLParamsOptions, 'values'>
+
+export const useValidatedSortingFromURLParams = ({
+    allowedSortByList,
+    defaultOrder,
+    defaultSortBy,
+}: UseValidatedFiltersFromURLParamsOptions) => {
+    const [searchParams, setSearhParams] = useSearchParams()
+
+    const validated = getValidatedSortingFromURLParams({
+        allowedSortByList,
+        defaultOrder,
+        defaultSortBy,
+        values: {
+            sortBy: searchParams.get('sortBy') ?? defaultSortBy,
+            order: searchParams.get('order') ?? defaultOrder,
+        },
+    })
+
+    const setSortingToSearchParams = (sortBy: string, order: string) => {
+        setSearhParams(oldSearchParams => {
+            oldSearchParams.set('sortBy', sortBy)
+            oldSearchParams.set('order', order)
+            return oldSearchParams
+        })
+    }
+
+    const clearSortingFromSearchParams = () => {
+        setSearhParams(oldSearchParams => {
+            oldSearchParams.delete('sortBy')
+            oldSearchParams.delete('order')
+            return oldSearchParams
+        })
+    }
+
+    return { values: validated, setSortingToSearchParams, clearSortingFromSearchParams }
 }

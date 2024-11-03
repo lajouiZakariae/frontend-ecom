@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button'
 
 import { ControlledDataTable, type ControlledDatatableProps } from '@/components/datatables/datatable'
 import { usePagination } from '@/hooks/use-pagination'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { UserService } from '@/features/users/service'
 import { useTranslation } from 'react-i18next'
@@ -95,20 +95,30 @@ const UsersView = () => {
 
     const { page, setPage } = usePagination()
 
-    const validatedSortBy = useValidatedSortingFromURLParams({
+    const {
+        values: validatedSortBy,
+        setSortingToSearchParams,
+        clearSortingFromSearchParams,
+    } = useValidatedSortingFromURLParams({
         allowedSortByList: ['first_name', 'last_name', 'email'],
         defaultSortBy: 'first_name',
         defaultOrder: 'asc',
     })
 
-    console.log(validatedSortBy)
-
     const [sorting, setSorting] = useState<SortingState>([
         {
-            id: 'first_name',
-            desc: false,
+            id: validatedSortBy.sortBy,
+            desc: validatedSortBy.order === 'desc',
         },
     ])
+
+    useEffect(() => {
+        if (sorting[0]) {
+            setSortingToSearchParams(sorting[0].id, sorting[0].desc ? 'desc' : 'asc')
+        } else {
+            clearSortingFromSearchParams()
+        }
+    }, [sorting])
 
     const sortBy = sorting.at(0)?.id
 
