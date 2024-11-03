@@ -40,43 +40,38 @@ export const MultiSelectDropdownFilter: FC<MultiSelectDropdownFilterProps> = ({
         <Popover>
             <PopoverTrigger asChild>
                 <Button variant='outline' size='sm' className='h-8 border-dashed'>
-                    <PlusCircledIcon className='mr-2 h-4 w-4' />
+                    <PlusCircledIcon className='mr-2 size-4' />
                     {title}
 
-                    {selectedOptions?.length > 0 && <Separator orientation='vertical' className='mx-2 h-4' />}
+                    {selectedOptions?.length > 0 || options.length > 2 ? (
+                        <Separator orientation='vertical' className='mx-1 h-4' />
+                    ) : null}
 
-                    {selectedOptions?.length > 0 &&
+                    {/* {selectedOptions?.length > 0 &&
                         selectedOptions.map(status => (
                             <Badge key={status.value} variant='secondary' className='rounded-sm px-1 font-normal'>
                                 {status.label}
                             </Badge>
-                        ))}
+                        ))} */}
 
                     <div className='hidden space-x-1 lg:flex'>
-                        {/* {"selectedValues.size" > 2 ? (
-                                            <Badge
-                                                variant="secondary"
-                                                className="rounded-sm px-1 font-normal"
-                                            >
-                                                {selectedValues.size} selected
-                                            </Badge>
-                                        ) : (
-                                            options
-                                                .filter(option =>
-                                                    selectedValues.has(
-                                                        option.value
-                                                    )
-                                                )
-                                                .map(option => (
-                                                    <Badge
-                                                        variant="secondary"
-                                                        key={option.value}
-                                                        className="rounded-sm px-1 font-normal"
-                                                    >
-                                                        {option.label}
-                                                    </Badge>
-                                                ))
-                                        )} */}
+                        {options.length > 2 ? (
+                            <Badge variant='secondary' className='rounded-sm px-1 font-normal'>
+                                {selectedValues.length} selected
+                            </Badge>
+                        ) : (
+                            selectedValues
+                                // .filter(option => selectedValues.has(option.value))
+                                .map(option => (
+                                    <Badge
+                                        variant='secondary'
+                                        key={option.value}
+                                        className='rounded-sm px-1 font-normal'
+                                    >
+                                        {option.label}
+                                    </Badge>
+                                ))
+                        )}
                     </div>
                 </Button>
             </PopoverTrigger>

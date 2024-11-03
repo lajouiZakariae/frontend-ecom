@@ -26,7 +26,7 @@ const router = createBrowserRouter([
                 Component: UsersView,
             },
             {
-                path: '/form',
+                path: '/users/create',
                 Component: FormView,
             },
         ],

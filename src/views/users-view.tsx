@@ -131,6 +131,7 @@ const UsersView = () => {
     const statusOptions = [
         { label: 'Active', value: 'active' },
         { label: 'Banned', value: 'banned' },
+        { label: 'Pending', value: 'pending' },
     ]
 
     const [selectedOptions, setSelectedOptions] = useState<typeof statusOptions>([])
