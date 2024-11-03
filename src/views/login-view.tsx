@@ -22,7 +22,7 @@ const LoginView = () => {
         onSuccess: data => {
             const userData = data.user
 
-            const userToken = data.token
+            const userToken = data.meta.token
 
             TokenStorageService.saveToken(userToken)
 

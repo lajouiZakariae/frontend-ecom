@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button'
 import { ControlledDataTable, type ControlledDatatableProps } from '@/components/datatables/datatable'
 import { usePagination } from '@/hooks/use-pagination'
 import { FC, PropsWithChildren, useEffect, useMemo, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useCustomersSorting } from '@/features/customers/hooks/use-customers-sorting'
 import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog'
@@ -23,8 +23,9 @@ import { dateToMediumFormat } from '@/lib/dates/date-to-medium-format'
 import { Input } from '@/components/ui/input'
 import { useFormik } from 'formik'
 import { Link } from 'react-router-dom'
-import { customerQueryOptions } from '../query-options'
+import { customerQueryKeys, customerQueryOptions } from '../query-options'
 import { useSearchFromSearchParam } from '@/hooks/use-search-from-search-param'
+import { CustomerService } from '../service'
 
 type Customer = {
     id: number
@@ -60,6 +61,8 @@ export const CustomersDatatable = () => {
 
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
+    const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(null)
+
     const columns: ColumnDef<Customer>[] = useMemo(
         () => [
             {
@@ -85,33 +88,31 @@ export const CustomersDatatable = () => {
             },
             {
                 id: 'actions',
-                cell: ({ row }) => (
-                    <ActionsDropdown>
-                        <Link to={`/customers/${row.original.id}/edit`}>
-                            <DropdownMenuItem className='cursor-pointer'>
-                                <Edit className='mr-2 h-4 w-4' />
-                                {t('Edit')}
-                            </DropdownMenuItem>
-                        </Link>
+                cell: ({ row }) => {
+                    return (
+                        <>
+                            <ActionsDropdown>
+                                <Link to={`/customers/${row.original.id}/edit`}>
+                                    <DropdownMenuItem className='cursor-pointer'>
+                                        <Edit className='mr-2 h-4 w-4' />
+                                        {t('Edit')}
+                                    </DropdownMenuItem>
+                                </Link>
 
-                        <ConfirmDeleteDialog
-                            isOpen={isDeleteDialogOpen}
-                            setIsOpen={setIsDeleteDialogOpen}
-                            button={
                                 <DropdownMenuItem
                                     className='cursor-pointer'
-                                    onClick={() => setIsDeleteDialogOpen(true)}
+                                    onClick={() => {
+                                        setIsDeleteDialogOpen(true)
+                                        setSelectedCustomerId(row.original.id)
+                                    }}
                                 >
                                     <Trash className='mr-2 size-4' />
                                     {t('Delete')}
                                 </DropdownMenuItem>
-                            }
-                            onConfirm={() => {
-                                console.log('Delete', row.original.id)
-                            }}
-                        />
-                    </ActionsDropdown>
-                ),
+                            </ActionsDropdown>
+                        </>
+                    )
+                },
             },
         ],
         [isDeleteDialogOpen],
@@ -157,6 +158,20 @@ export const CustomersDatatable = () => {
         },
     })
 
+    const deleteCustomerMutation = useMutation({
+        mutationFn: CustomerService.deleteById,
+        meta: {
+            invalidates: [customerQueryKeys.all()],
+        },
+    })
+
+    const deleteManyCustomerMutation = useMutation({
+        mutationFn: CustomerService.deleteMany,
+        meta: {
+            invalidates: [customerQueryKeys.all()],
+        },
+    })
+
     useEffect(() => {
         if (searchForm.values.search === '') {
             clearSearch()
@@ -194,7 +209,8 @@ export const CustomersDatatable = () => {
                             </Button>
                         }
                         onConfirm={() => {
-                            console.log('Delete', selectedRows)
+                            deleteManyCustomerMutation.mutateAsync(selectedRows)
+
                             setIsDeleteManyDialogOpen(false)
                         }}
                     />
@@ -206,6 +222,21 @@ export const CustomersDatatable = () => {
             </div>
 
             <ControlledDataTable<Customer> {...dataTableProps} />
+
+            <ConfirmDeleteDialog
+                isOpen={isDeleteDialogOpen}
+                setIsOpen={open => {
+                    if (open === false) setSelectedCustomerId(null)
+                    setIsDeleteDialogOpen(open)
+                }}
+                button={undefined}
+                onConfirm={() => {
+                    if (selectedCustomerId) {
+                        deleteCustomerMutation.mutateAsync(selectedCustomerId)
+                    }
+                    setIsDeleteDialogOpen(false)
+                }}
+            />
         </div>
     )
 }

@@ -86,7 +86,7 @@ export const ControlledDataTable = <TData,>(dataTableProps: ControlledDatatableP
             },
             ...columns,
         ],
-        [],
+        [columns],
     )
 
     const [rowSelection, setRowSelection] = useState({})

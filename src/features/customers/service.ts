@@ -19,4 +19,12 @@ export class CustomerService {
         const { data } = await apiClient.get(`users/${customerId}`)
         return data
     }
+
+    static async deleteById(id: number) {
+        return await apiClient.delete(`users/${id}`)
+    }
+
+    static async deleteMany(ids: number[]) {
+        return await apiClient.delete('users', { data: { ids } })
+    }
 }
