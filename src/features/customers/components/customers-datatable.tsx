@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button'
 
 import { ControlledDataTable, type ControlledDatatableProps } from '@/components/datatables/datatable'
 import { usePagination } from '@/hooks/use-pagination'
-import { useEffect, useState } from 'react'
+import { FC, PropsWithChildren, useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useCustomersSorting } from '@/features/customers/hooks/use-customers-sorting'
@@ -22,8 +22,9 @@ import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog'
 import { dateToMediumFormat } from '@/lib/dates/date-to-medium-format'
 import { Input } from '@/components/ui/input'
 import { useFormik } from 'formik'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { customerQueryOptions } from '../query-options'
+import { useSearchFromSearchParam } from '@/hooks/use-search-from-search-param'
 
 type Customer = {
     id: number
@@ -33,82 +34,88 @@ type Customer = {
     created_at: string
 }
 
-const columns: ColumnDef<Customer>[] = [
-    {
-        accessorKey: 'first_name',
-        header: 'First Name',
-        id: 'first_name',
-    },
-    {
-        accessorKey: 'last_name',
-        header: 'Last Name',
-        id: 'last_name',
-    },
-    {
-        accessorKey: 'email',
-        header: 'Email',
-        id: 'email',
-    },
-    {
-        accessorKey: 'created_at',
-        header: 'Date Created',
-        id: 'created_at',
-        cell: ({ row }) => dateToMediumFormat(new Date(row.original.created_at)),
-    },
-    {
-        id: 'actions',
-        cell: ({ row }) => (
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant='ghost' className='h-8 w-8 p-0'>
-                        <span className='sr-only'>Open menu</span>
-                        <MoreHorizontal className='h-4 w-4' />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align='end'>
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <Link to={`/customers/${row.original.id}/edit`}>
-                        <DropdownMenuItem className='cursor-pointer'>
-                            <Edit className='mr-2 h-4 w-4' />
-                            Edit
-                        </DropdownMenuItem>
-                    </Link>
-                    <DropdownMenuItem>
-                        <Trash className='mr-2 h-4 w-4' />
-                        Delete
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        ),
-    },
-]
+const ActionsDropdown: FC<PropsWithChildren> = ({ children }) => {
+    const { t } = useTranslation()
 
-const useSearchFromSearchParam = () => {
-    const [searchParams, setSearchParams] = useSearchParams()
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant='ghost' className='h-8 w-8 p-0'>
+                    <span className='sr-only'>Open menu</span>
 
-    const search = searchParams.get('search') || ''
+                    <MoreHorizontal className='h-4 w-4' />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align='end'>
+                <DropdownMenuLabel>{t('Actions')}</DropdownMenuLabel>
 
-    const setSearch = (search: string) => {
-        setSearchParams(oldParams => {
-            const newParams = new URLSearchParams(oldParams)
-            newParams.set('search', search)
-            return newParams
-        })
-    }
-
-    const clearSearch = () => {
-        setSearchParams(oldParams => {
-            const newParams = new URLSearchParams(oldParams)
-            newParams.delete('search')
-            return newParams
-        })
-    }
-
-    return { search, setSearch, clearSearch }
+                {children}
+            </DropdownMenuContent>
+        </DropdownMenu>
+    )
 }
 
 export const CustomersDatatable = () => {
     const { t } = useTranslation()
+
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+
+    const columns: ColumnDef<Customer>[] = useMemo(
+        () => [
+            {
+                accessorKey: 'first_name',
+                header: 'First Name',
+                id: 'first_name',
+            },
+            {
+                accessorKey: 'last_name',
+                header: 'Last Name',
+                id: 'last_name',
+            },
+            {
+                accessorKey: 'email',
+                header: 'Email',
+                id: 'email',
+            },
+            {
+                accessorKey: 'created_at',
+                header: 'Date Created',
+                id: 'created_at',
+                cell: ({ row }) => dateToMediumFormat(new Date(row.original.created_at)),
+            },
+            {
+                id: 'actions',
+                cell: ({ row }) => (
+                    <ActionsDropdown>
+                        <Link to={`/customers/${row.original.id}/edit`}>
+                            <DropdownMenuItem className='cursor-pointer'>
+                                <Edit className='mr-2 h-4 w-4' />
+                                {t('Edit')}
+                            </DropdownMenuItem>
+                        </Link>
+
+                        <ConfirmDeleteDialog
+                            isOpen={isDeleteDialogOpen}
+                            setIsOpen={setIsDeleteDialogOpen}
+                            button={
+                                <DropdownMenuItem
+                                    className='cursor-pointer'
+                                    onClick={() => setIsDeleteDialogOpen(true)}
+                                >
+                                    <Trash className='mr-2 size-4' />
+                                    {t('Delete')}
+                                </DropdownMenuItem>
+                            }
+                            onConfirm={() => {
+                                console.log('Delete', row.original.id)
+                            }}
+                        />
+                    </ActionsDropdown>
+                ),
+            },
+        ],
+        [isDeleteDialogOpen],
+    )
 
     const { page, setPage } = usePagination()
 
@@ -141,7 +148,7 @@ export const CustomersDatatable = () => {
         },
     }
 
-    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+    const [isDeleteManyDialogOpen, setIsDeleteManyDialogOpen] = useState(false)
 
     const searchForm = useFormik({
         initialValues: { search },
@@ -171,15 +178,15 @@ export const CustomersDatatable = () => {
 
                 <div className='flex items-center space-x-1'>
                     <ConfirmDeleteDialog
-                        isOpen={isDeleteDialogOpen}
-                        setIsOpen={setIsDeleteDialogOpen}
+                        isOpen={isDeleteManyDialogOpen}
+                        setIsOpen={setIsDeleteManyDialogOpen}
                         button={
                             <Button
                                 variant='destructive'
                                 size='sm'
                                 disabled={selectedRows.length === 0}
                                 onClick={() => {
-                                    setIsDeleteDialogOpen(true)
+                                    setIsDeleteManyDialogOpen(true)
                                 }}
                             >
                                 <Trash2 className='mr-2 size-4' />
@@ -188,7 +195,7 @@ export const CustomersDatatable = () => {
                         }
                         onConfirm={() => {
                             console.log('Delete', selectedRows)
-                            setIsDeleteDialogOpen(false)
+                            setIsDeleteManyDialogOpen(false)
                         }}
                     />
 
