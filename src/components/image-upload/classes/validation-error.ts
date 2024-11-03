@@ -1,3 +1,3 @@
 export class ValidationError {
-  constructor(public message: string) {}
+    constructor(public message: string) {}
 }

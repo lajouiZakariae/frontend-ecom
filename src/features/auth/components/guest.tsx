@@ -11,7 +11,7 @@ export const Guest: FC<AuthProps> = ({ children, fallback }) => {
     const user = useUserFromStore()
 
     if (user) {
-        return fallback || <Navigate to="/" />
+        return fallback || <Navigate to='/' />
     }
 
     return <>{children}</>

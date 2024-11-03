@@ -13,7 +13,7 @@ export const Auth: FC<AuthProps> = ({ children, fallback }) => {
     console.log(user)
 
     if (!user) {
-        return fallback || <Navigate to="/login" />
+        return fallback || <Navigate to='/login' />
     }
 
     return <>{children}</>

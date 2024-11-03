@@ -26,7 +26,7 @@ const siteSettingsSlice = createSlice({
     name: 'siteSettings',
     initialState,
     reducers: {
-        toggleSidebar: (state) => {
+        toggleSidebar: state => {
             state.isSidebarOpen = !state.isSidebarOpen
         },
         setSidebarOpen: (state, action) => {

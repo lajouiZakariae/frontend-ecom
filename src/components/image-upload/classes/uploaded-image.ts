@@ -1,11 +1,11 @@
 export class UploadedImage {
-  constructor(private file: File) {}
+    constructor(private file: File) {}
 
-  getFile() {
-    return this.file
-  }
+    getFile() {
+        return this.file
+    }
 
-  getFileSize() {
-    return this.file.size
-  }
+    getFileSize() {
+        return this.file.size
+    }
 }

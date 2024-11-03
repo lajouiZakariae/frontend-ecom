@@ -1,6 +1,6 @@
-import { ColumnDef, SortingState } from '@tanstack/react-table';
+import { ColumnDef, SortingState } from '@tanstack/react-table'
 
-import { MoreHorizontal, Trash, Edit, Trash2 } from 'lucide-react';
+import { MoreHorizontal, Trash, Edit, Trash2 } from 'lucide-react'
 
 import {
     DropdownMenu,
@@ -8,24 +8,24 @@ import {
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu'
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/button'
 
-import { DataTable, DatatableProps } from '@/components/datatables/datatable';
-import { usePagination } from '@/hooks/use-pagination';
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { UserService } from '@/features/users/service';
-import { useTranslation } from 'react-i18next';
-import { Filter } from '@/components/filters/filter';
+import { DataTable, DatatableProps } from '@/components/datatables/datatable'
+import { usePagination } from '@/hooks/use-pagination'
+import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { UserService } from '@/features/users/service'
+import { useTranslation } from 'react-i18next'
+import { MultiSelectDropdownFilter } from '@/components/filters/multi-select-dropdown-filter'
 
 type User = {
-    id: number;
-    first_name: string;
-    last_name: string;
-    email: string;
-};
+    id: number
+    first_name: string
+    last_name: string
+    email: string
+}
 
 const data: User[] = [
     { id: 1, first_name: 'John', last_name: 'Doe', email: 'john@example.com' },
@@ -41,7 +41,7 @@ const data: User[] = [
         last_name: 'Johnson',
         email: 'bob@example.com',
     },
-];
+]
 
 const columns: ColumnDef<User>[] = [
     {
@@ -62,47 +62,43 @@ const columns: ColumnDef<User>[] = [
     {
         id: 'actions',
         cell: ({ row }) => {
-            const person = row.original;
+            const person = row.original
 
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
+                        <Button variant='ghost' className='h-8 w-8 p-0'>
+                            <span className='sr-only'>Open menu</span>
+                            <MoreHorizontal className='h-4 w-4' />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent align='end'>
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                            onClick={() => console.log('Edit', person)}
-                        >
-                            <Edit className="mr-2 h-4 w-4" />
+                        <DropdownMenuItem onClick={() => console.log('Edit', person)}>
+                            <Edit className='mr-2 h-4 w-4' />
                             Edit
                         </DropdownMenuItem>
-                        <DropdownMenuItem
-                            onClick={() => console.log('Delete', person)}
-                        >
-                            <Trash className="mr-2 h-4 w-4" />
+                        <DropdownMenuItem onClick={() => console.log('Delete', person)}>
+                            <Trash className='mr-2 h-4 w-4' />
                             Delete
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
-            );
+            )
         },
     },
-];
+]
 
 const UsersView = () => {
-    const { t } = useTranslation();
+    const { t } = useTranslation()
 
-    const { page, setPage } = usePagination();
+    const { page, setPage } = usePagination()
 
-    const [sorting, setSorting] = useState<SortingState>([]);
+    const [sorting, setSorting] = useState<SortingState>([])
 
-    const sortBy = sorting.at(0)?.id;
+    const sortBy = sorting.at(0)?.id
 
-    const order = sorting.at(0)?.desc ? 'desc' : 'asc';
+    const order = sorting.at(0)?.desc ? 'desc' : 'asc'
 
     const usersQuery = useQuery({
         queryKey: ['users', { page, sortBy, order }],
@@ -112,9 +108,9 @@ const UsersView = () => {
                 sortBy,
                 order,
             }),
-    });
+    })
 
-    const [selectedRows, setSelectedRows] = useState<number[]>([]);
+    const [selectedRows, setSelectedRows] = useState<number[]>([])
 
     const dataTableProps: DatatableProps<User> = {
         columns,
@@ -128,24 +124,22 @@ const UsersView = () => {
         getRowId: row => row.id.toString(),
         onPageChange: setPage,
         onRowSelectedChange: selectedRows => {
-            setSelectedRows(selectedRows.map(Number));
+            setSelectedRows(selectedRows.map(Number))
         },
-    };
+    }
 
     const statusOptions = [
         { label: 'Active', value: 'active' },
         { label: 'Banned', value: 'banned' },
-    ];
+    ]
 
-    const [selectedOptions, setSelectedOptions] = useState<
-        typeof statusOptions
-    >([]);
+    const [selectedOptions, setSelectedOptions] = useState<typeof statusOptions>([])
 
     return (
-        <div className="w-full">
-            <div className="mb-4 flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                    <Filter
+        <div className='w-full'>
+            <div className='mb-4 flex items-center justify-between'>
+                <div className='flex items-center space-x-2'>
+                    <MultiSelectDropdownFilter
                         options={statusOptions}
                         title={t('Status')}
                         selectedOptions={selectedOptions}
@@ -153,18 +147,14 @@ const UsersView = () => {
                     />
                 </div>
 
-                <Button
-                    variant="destructive"
-                    size="sm"
-                    disabled={selectedRows.length === 0}
-                >
-                    <Trash2 className="mr-2 h-4 w-4" />
+                <Button variant='destructive' size='sm' disabled={selectedRows.length === 0}>
+                    <Trash2 className='mr-2 h-4 w-4' />
                     Delete Selected
                 </Button>
             </div>
             <DataTable<User> {...dataTableProps} />
         </div>
-    );
-};
+    )
+}
 
-export default UsersView;
+export default UsersView

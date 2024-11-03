@@ -1,12 +1,12 @@
-import { useDispatch } from 'react-redux';
-import { setUser } from '../store';
+import { useDispatch } from 'react-redux'
+import { setUser } from '../store'
 
 export const useSetUserData = () => {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch()
 
     return data => {
-        dispatch(setUser(data ? { ...data } : null));
+        dispatch(setUser(data ? { ...data } : null))
 
-        return data;
-    };
-};
+        return data
+    }
+}

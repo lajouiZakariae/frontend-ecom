@@ -1,38 +1,35 @@
 import { useMemo, type FC, type SVGAttributes } from 'react'
 
-export const UploadIcon: FC<SVGAttributes<SVGElement>> = ({
-  className,
-  ...props
-}) => {
-  const preparedClassName = useMemo(() => {
-    let preparedClassName = className || ''
+export const UploadIcon: FC<SVGAttributes<SVGElement>> = ({ className, ...props }) => {
+    const preparedClassName = useMemo(() => {
+        let preparedClassName = className || ''
 
-    if (!/size-.*/.test(preparedClassName)) {
-      preparedClassName += ' size-6'
-    }
+        if (!/size-.*/.test(preparedClassName)) {
+            preparedClassName += ' size-6'
+        }
 
-    if (!/text-.*/.test(preparedClassName)) {
-      preparedClassName += ' text-gray-600'
-    }
+        if (!/text-.*/.test(preparedClassName)) {
+            preparedClassName += ' text-gray-600'
+        }
 
-    return preparedClassName
-  }, [className])
+        return preparedClassName
+    }, [className])
 
-  return (
-    <svg
-      xmlns='http://www.w3.org/2000/svg'
-      viewBox='0 0 24 24'
-      fill='none'
-      stroke='currentColor'
-      strokeWidth='2'
-      strokeLinecap='round'
-      strokeLinejoin='round'
-      className={`${preparedClassName} ${className}`}
-      {...props}
-    >
-      <path d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4' />
-      <polyline points='17 8 12 3 7 8' />
-      <line x1='12' x2='12' y1='3' y2='15' />
-    </svg>
-  )
+    return (
+        <svg
+            xmlns='http://www.w3.org/2000/svg'
+            viewBox='0 0 24 24'
+            fill='none'
+            stroke='currentColor'
+            strokeWidth='2'
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            className={`${preparedClassName} ${className}`}
+            {...props}
+        >
+            <path d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4' />
+            <polyline points='17 8 12 3 7 8' />
+            <line x1='12' x2='12' y1='3' y2='15' />
+        </svg>
+    )
 }

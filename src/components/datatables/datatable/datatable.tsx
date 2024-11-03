@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
 import {
     ColumnDef,
     flexRender,
@@ -7,57 +7,43 @@ import {
     SortingState,
     TableOptions,
     useReactTable,
-} from '@tanstack/react-table';
+} from '@tanstack/react-table'
 
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import {
-    AlertCircle,
-    ArrowDown,
-    ArrowUp,
-    ArrowUpDown,
-    ChevronLeft,
-    ChevronRight,
-} from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { AlertCircle, ArrowDown, ArrowUp, ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Input } from '@/components/ui/input'
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { SpinnerIcon } from '@/components/icons';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { SpinnerIcon } from '@/components/icons'
 
 export interface SortOptions<TData> {
-    sortBy: keyof TData;
-    order: 'asc' | 'desc';
+    sortBy: keyof TData
+    order: 'asc' | 'desc'
 }
 
 export interface DatatableProps<TData> {
-    columns: ColumnDef<TData>[];
-    data: TData[];
-    onRowSelectedChange: (rowSelection: string[]) => void;
-    page: number;
-    pageCount: number;
-    sorting: SortingState;
-    setSorting: Dispatch<SetStateAction<SortingState>>;
-    getRowId: TableOptions<TData>['getRowId'];
-    onPageChange?: (page: number) => void;
-    isFetching?: boolean;
-    isError?: boolean;
+    columns: ColumnDef<TData>[]
+    data: TData[]
+    onRowSelectedChange: (rowSelection: string[]) => void
+    page: number
+    pageCount: number
+    sorting: SortingState
+    setSorting: Dispatch<SetStateAction<SortingState>>
+    getRowId: TableOptions<TData>['getRowId']
+    onPageChange?: (page: number) => void
+    isFetching?: boolean
+    isError?: boolean
 }
 
 const ErrorMessage = ({ message }: { message: string }) => (
-    <Alert variant="destructive">
-        <AlertCircle className="h-4 w-4" />
+    <Alert variant='destructive'>
+        <AlertCircle className='h-4 w-4' />
         <AlertTitle>Error</AlertTitle>
         <AlertDescription>{message}</AlertDescription>
     </Alert>
-);
+)
 
 export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
     const {
@@ -72,7 +58,7 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
         setSorting,
         isFetching = false,
         isError = false,
-    } = dataTableProps;
+    } = dataTableProps
 
     const columnsWithMultiSelect = useMemo(
         () => [
@@ -81,17 +67,15 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
                 header: ({ table }) => (
                     <Checkbox
                         checked={table.getIsAllPageRowsSelected()}
-                        onCheckedChange={value =>
-                            table.toggleAllPageRowsSelected(!!value)
-                        }
-                        aria-label="Select all"
+                        onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
+                        aria-label='Select all'
                     />
                 ),
                 cell: ({ row }) => (
                     <Checkbox
                         checked={row.getIsSelected()}
                         onCheckedChange={value => row.toggleSelected(!!value)}
-                        aria-label="Select row"
+                        aria-label='Select row'
                     />
                 ),
                 enableSorting: false,
@@ -99,15 +83,15 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
             },
             ...columns,
         ],
-        []
-    );
+        [],
+    )
 
-    const [rowSelection, setRowSelection] = useState({});
+    const [rowSelection, setRowSelection] = useState({})
 
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: page - 1,
         pageSize: pageCount,
-    });
+    })
 
     const table = useReactTable({
         data,
@@ -126,40 +110,40 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
         manualPagination: true,
         manualSorting: true,
         enableMultiSort: true,
-    });
+    })
 
     useEffect(() => {
-        onPageChange?.(pagination.pageIndex + 1);
-    }, [pagination.pageIndex]);
+        onPageChange?.(pagination.pageIndex + 1)
+    }, [pagination.pageIndex])
 
     useEffect(() => {
         onRowSelectedChange?.(
             Object.entries(rowSelection)
                 .filter(([, value]) => value === true)
-                .map(([key]) => key)
-        );
-    }, [rowSelection]);
+                .map(([key]) => key),
+        )
+    }, [rowSelection])
 
-    const [paginationInputValue, setPaginationInputValue] = useState('');
+    const [paginationInputValue, setPaginationInputValue] = useState('')
 
     const applyPagination = (page: number) => {
-        table.setPageIndex(page);
-    };
+        table.setPageIndex(page)
+    }
 
     const renderSortingIcon = (sortintState: 'asc' | 'desc' | false) => {
         if (sortintState === false) {
-            return <ArrowUpDown className="size-4" />;
+            return <ArrowUpDown className='size-4' />
         }
 
         return {
-            asc: <ArrowDown className="size-4" />,
-            desc: <ArrowUp className="size-4" />,
-        }[sortintState];
-    };
+            asc: <ArrowDown className='size-4' />,
+            desc: <ArrowUp className='size-4' />,
+        }[sortintState]
+    }
 
     return (
         <>
-            <div className="rounded-md border">
+            <div className='rounded-md border'>
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map(headerGroup => (
@@ -168,28 +152,15 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
                                     <TableHead key={header.id}>
                                         {header.id === 'select' ? (
                                             header.isPlaceholder ? null : (
-                                                flexRender(
-                                                    header.column.columnDef
-                                                        .header,
-                                                    header.getContext()
-                                                )
+                                                flexRender(header.column.columnDef.header, header.getContext())
                                             )
                                         ) : (
-                                            <Button
-                                                variant="ghost"
-                                                onClick={header.column.getToggleSortingHandler()}
-                                            >
+                                            <Button variant='ghost' onClick={header.column.getToggleSortingHandler()}>
                                                 {header.isPlaceholder
                                                     ? null
-                                                    : flexRender(
-                                                          header.column
-                                                              .columnDef.header,
-                                                          header.getContext()
-                                                      )}
+                                                    : flexRender(header.column.columnDef.header, header.getContext())}
                                                 {header.column.getCanSort()
-                                                    ? renderSortingIcon(
-                                                          header.column.getIsSorted()
-                                                      )
+                                                    ? renderSortingIcon(header.column.getIsSorted())
                                                     : null}
                                             </Button>
                                         )}
@@ -199,52 +170,34 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
                         ))}
                     </TableHeader>
 
-                    <TableBody className="">
+                    <TableBody className=''>
                         {isError ? (
                             <TableRow>
-                                <TableCell
-                                    colSpan={columnsWithMultiSelect.length}
-                                    className="p-4"
-                                >
-                                    <ErrorMessage
-                                        message={'Failed to load the data'}
-                                    />
+                                <TableCell colSpan={columnsWithMultiSelect.length} className='p-4'>
+                                    <ErrorMessage message={'Failed to load the data'} />
                                 </TableCell>
                             </TableRow>
                         ) : isFetching ? (
                             <TableRow>
-                                <TableCell
-                                    colSpan={columnsWithMultiSelect.length}
-                                >
-                                    <div className="w-full min-h-80 flex justify-center items-center ">
-                                        <SpinnerIcon className="animate-spin h-8 w-8 m-auto" />
+                                <TableCell colSpan={columnsWithMultiSelect.length}>
+                                    <div className='flex min-h-80 w-full items-center justify-center'>
+                                        <SpinnerIcon className='m-auto h-8 w-8 animate-spin' />
                                     </div>
                                 </TableCell>
                             </TableRow>
                         ) : table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map(row => (
-                                <TableRow
-                                    key={row.id}
-                                    data-state={
-                                        row.getIsSelected() && 'selected'
-                                    }
-                                >
+                                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                                     {row.getVisibleCells().map(cell => (
                                         <TableCell key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext()
-                                            )}
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
                                 </TableRow>
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell
-                                    colSpan={columns.length}
-                                    className="h-24 text-center"
-                                >
+                                <TableCell colSpan={columns.length} className='h-24 text-center'>
                                     No results.
                                 </TableCell>
                             </TableRow>
@@ -253,56 +206,53 @@ export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
                 </Table>
             </div>
 
-            <div className="mt-4 flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0 sm:space-x-4">
-                <div className="flex items-center space-x-2">
+            <div className='mt-4 flex flex-col items-center justify-between space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0'>
+                <div className='flex items-center space-x-2'>
                     <Button
-                        variant="outline"
-                        className="h-8 w-8 p-0"
+                        variant='outline'
+                        className='h-8 w-8 p-0'
                         onClick={() => table.previousPage()}
                         disabled={!table.getCanPreviousPage()}
                     >
-                        <span className="sr-only">Go to previous page</span>
-                        <ChevronLeft className="h-4 w-4" />
+                        <span className='sr-only'>Go to previous page</span>
+                        <ChevronLeft className='h-4 w-4' />
                     </Button>
 
-                    <span className="text-sm font-medium">
-                        Page {pagination.pageIndex + 1} of{' '}
-                        {table.getPageCount()}
+                    <span className='text-sm font-medium'>
+                        Page {pagination.pageIndex + 1} of {table.getPageCount()}
                     </span>
 
                     <Button
-                        variant="outline"
-                        className="h-8 w-8 p-0"
+                        variant='outline'
+                        className='h-8 w-8 p-0'
                         onClick={() => table.nextPage()}
                         disabled={!table.getCanNextPage()}
                     >
-                        <span className="sr-only">Go to next page</span>
-                        <ChevronRight className="h-4 w-4" />
+                        <span className='sr-only'>Go to next page</span>
+                        <ChevronRight className='h-4 w-4' />
                     </Button>
                 </div>
                 <form
                     onSubmit={ev => {
-                        ev.preventDefault();
-                        applyPagination(Number(paginationInputValue) - 1);
+                        ev.preventDefault()
+                        applyPagination(Number(paginationInputValue) - 1)
                     }}
                 >
-                    <div className="flex items-center space-x-2">
+                    <div className='flex items-center space-x-2'>
                         <Input
-                            type="number"
-                            placeholder="Page"
+                            type='number'
+                            placeholder='Page'
                             value={paginationInputValue}
-                            onChange={e =>
-                                setPaginationInputValue(e.target.value)
-                            }
-                            className="w-20"
+                            onChange={e => setPaginationInputValue(e.target.value)}
+                            className='w-20'
                             min={1}
                             max={table.getPageCount()}
                         />
 
-                        <Button type="submit">Go</Button>
+                        <Button type='submit'>Go</Button>
                     </div>
                 </form>
             </div>
         </>
-    );
-};
+    )
+}

@@ -1,1 +1,1 @@
-export { ImageUplaod } from './image-upload';
+export { ImageUplaod } from './image-upload'

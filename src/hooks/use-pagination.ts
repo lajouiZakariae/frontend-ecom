@@ -1,28 +1,28 @@
-import { useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 
 export const usePagination = () => {
-    const [urlSearchParams, setUrlSearchParams] = useSearchParams();
+    const [urlSearchParams, setUrlSearchParams] = useSearchParams()
 
     const page = useMemo(() => {
-        const currentPageFromSearchParams = urlSearchParams.get('page');
+        const currentPageFromSearchParams = urlSearchParams.get('page')
 
-        const currentPageAsNumber = Number(currentPageFromSearchParams);
+        const currentPageAsNumber = Number(currentPageFromSearchParams)
 
-        console.log('currentPageAsNumber', currentPageAsNumber);
+        console.log('currentPageAsNumber', currentPageAsNumber)
 
-        return currentPageAsNumber;
-    }, [urlSearchParams.get('page')]);
+        return currentPageAsNumber
+    }, [urlSearchParams.get('page')])
 
     const setPage = (page: number) => {
         setUrlSearchParams(prev => {
-            prev.set('page', page.toString());
-            return prev;
-        });
-    };
+            prev.set('page', page.toString())
+            return prev
+        })
+    }
 
     return {
         page,
         setPage,
-    };
-};
+    }
+}

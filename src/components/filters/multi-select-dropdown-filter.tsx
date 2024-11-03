@@ -1,10 +1,6 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/button'
 
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
 import {
     Command,
@@ -14,63 +10,49 @@ import {
     CommandItem,
     CommandList,
     CommandSeparator,
-} from '@/components/ui/command';
-import { cn } from '@/lib/utils';
-import { CheckIcon, PlusCircledIcon } from '@radix-ui/react-icons';
-import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
-import { FC, useEffect, useState } from 'react';
+} from '@/components/ui/command'
+import { cn } from '@/lib/utils'
+import { CheckIcon, PlusCircledIcon } from '@radix-ui/react-icons'
+import { Separator } from '@/components/ui/separator'
+import { Badge } from '@/components/ui/badge'
+import { FC, useEffect, useState } from 'react'
 
-interface FilterProps {
-    title: string;
-    options: { label: string; value: string }[];
-    selectedOptions: { label: string; value: string }[];
-    setSelectedOptions: (options: { label: string; value: string }[]) => void;
+interface MultiSelectDropdownFilterProps {
+    title: string
+    options: { label: string; value: string }[]
+    selectedOptions: { label: string; value: string }[]
+    setSelectedOptions: (options: { label: string; value: string }[]) => void
 }
 
-export const Filter: FC<FilterProps> = ({
+export const MultiSelectDropdownFilter: FC<MultiSelectDropdownFilterProps> = ({
     title,
     options,
     selectedOptions,
     setSelectedOptions,
 }) => {
-    const [selectedValues, setSelectedValues] =
-        useState<{ label: string; value: string }[]>(selectedOptions);
+    const [selectedValues, setSelectedValues] = useState<{ label: string; value: string }[]>(selectedOptions)
 
     useEffect(() => {
-        setSelectedOptions(selectedValues);
-    }, [selectedValues]);
+        setSelectedOptions(selectedValues)
+    }, [selectedValues])
 
     return (
         <Popover>
             <PopoverTrigger asChild>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-8 border-dashed"
-                >
-                    <PlusCircledIcon className="mr-2 h-4 w-4" />
+                <Button variant='outline' size='sm' className='h-8 border-dashed'>
+                    <PlusCircledIcon className='mr-2 h-4 w-4' />
                     {title}
 
-                    {selectedOptions?.length > 0 && (
-                        <Separator
-                            orientation="vertical"
-                            className="mx-2 h-4"
-                        />
-                    )}
+                    {selectedOptions?.length > 0 && <Separator orientation='vertical' className='mx-2 h-4' />}
 
                     {selectedOptions?.length > 0 &&
                         selectedOptions.map(status => (
-                            <Badge
-                                key={status.value}
-                                variant="secondary"
-                                className="rounded-sm px-1 font-normal lg:hidden"
-                            >
+                            <Badge key={status.value} variant='secondary' className='rounded-sm px-1 font-normal'>
                                 {status.label}
                             </Badge>
                         ))}
 
-                    <div className="hidden space-x-1 lg:flex">
+                    <div className='hidden space-x-1 lg:flex'>
                         {/* {"selectedValues.size" > 2 ? (
                                             <Badge
                                                 variant="secondary"
@@ -99,7 +81,7 @@ export const Filter: FC<FilterProps> = ({
                 </Button>
             </PopoverTrigger>
 
-            <PopoverContent className="w-[200px] p-0" align="start">
+            <PopoverContent className='w-[200px] p-0' align='start'>
                 <Command>
                     <CommandInput placeholder={title} />
 
@@ -108,9 +90,7 @@ export const Filter: FC<FilterProps> = ({
 
                         <CommandGroup>
                             {options.map(option => {
-                                const isSelected = selectedValues.find(
-                                    ({ value }) => option.value === value
-                                );
+                                const isSelected = selectedValues.find(({ value }) => option.value === value)
 
                                 return (
                                     <CommandItem
@@ -118,17 +98,10 @@ export const Filter: FC<FilterProps> = ({
                                         onSelect={() => {
                                             if (isSelected) {
                                                 setSelectedValues(prev =>
-                                                    prev.filter(
-                                                        ({ value }) =>
-                                                            option.value !==
-                                                            value
-                                                    )
-                                                );
+                                                    prev.filter(({ value }) => option.value !== value),
+                                                )
                                             } else {
-                                                setSelectedValues(prev => [
-                                                    ...prev,
-                                                    option,
-                                                ]);
+                                                setSelectedValues(prev => [...prev, option])
                                             }
                                         }}
                                     >
@@ -137,24 +110,19 @@ export const Filter: FC<FilterProps> = ({
                                                 'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
                                                 isSelected
                                                     ? 'bg-primary text-primary-foreground'
-                                                    : 'opacity-50 [&_svg]:invisible'
+                                                    : 'opacity-50 [&_svg]:invisible',
                                             )}
                                         >
-                                            <CheckIcon
-                                                className={cn('h-4 w-4')}
-                                            />
+                                            <CheckIcon className={cn('h-4 w-4')} />
                                         </div>
                                         <span>{option.label}</span>
                                     </CommandItem>
-                                );
+                                )
                             })}
                         </CommandGroup>
                         <CommandSeparator />
                         <CommandGroup>
-                            <CommandItem
-                                onSelect={() => setSelectedValues([])}
-                                className="justify-center text-center"
-                            >
+                            <CommandItem onSelect={() => setSelectedValues([])} className='justify-center text-center'>
                                 Clear filters
                             </CommandItem>
                         </CommandGroup>
@@ -162,5 +130,5 @@ export const Filter: FC<FilterProps> = ({
                 </Command>
             </PopoverContent>
         </Popover>
-    );
-};
+    )
+}
