@@ -1,7 +1,7 @@
 import { UserForm } from '@/features/users/components/user-form'
 import { customerQueryKeys } from '@/features/users/query-options'
 import { CustomerService } from '@/features/users/service'
-import { UserFormValues } from '@/features/users/types/user-form-values'
+import { UserFormValues } from '@/features/users/types'
 import { useMutation } from '@tanstack/react-query'
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'

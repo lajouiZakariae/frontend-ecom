@@ -28,7 +28,11 @@ const UpdateCustomerView = () => {
             </div>
 
             <Card className='w-full p-4'>
-                {customerUserQuery.isPending ? <LoadingCustomerForm /> : <UpdateUserForm />}
+                {customerUserQuery.isPending ? (
+                    <LoadingCustomerForm />
+                ) : (
+                    <UpdateUserForm customer={customerUserQuery.data.data} />
+                )}
             </Card>
         </div>
     )

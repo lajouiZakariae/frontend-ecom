@@ -1,7 +1,7 @@
 import { Form, FormikContextType, FormikProvider } from 'formik'
 import { Button } from '@/components/ui/button'
 import { TextFieldGroup } from '@/components/form-fields/text-field-group'
-import { UserFormValues } from '../types/user-form-values'
+import { UserFormValues } from '../types'
 
 interface UserFormProps extends FormikContextType<UserFormValues> {
     actionTitle: string
