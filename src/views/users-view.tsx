@@ -137,7 +137,7 @@ const UsersView = () => {
     const [selectedOptions, setSelectedOptions] = useState<typeof statusOptions>([])
 
     return (
-        <div className='w-full'>
+        <div className='w-full rounded-md bg-white p-4 shadow-lg'>
             <div className='mb-4 flex items-center justify-between'>
                 <div className='flex items-center space-x-2'>
                     <MultiSelectDropdownFilter

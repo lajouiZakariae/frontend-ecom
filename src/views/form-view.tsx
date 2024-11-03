@@ -1,78 +1,44 @@
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Form, FormikProvider, useFormik } from 'formik'
-import * as yup from 'yup'
-import { TextFieldGroup } from '../components/form-fields/text-field-group'
+import { Card } from '@/components/ui/card'
+import { UserFormWithFormik } from '@/features/users/components/user-form-with-formik'
+import { UserFormValues } from '@/features/users/types/user-form-values'
+import { ArrowLeft } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 
-interface UserFormValues {
-    first_name: string
-    last_name: string
-    email: string
-    password: string
-    password_confirmation: string
-}
+const CreateUserForm = () => {
+    const initialValues = {
+        first_name: 'Hello',
+        last_name: 'This',
+        email: 'is',
+        password: 'Edit',
+        password_confirmation: 'Page',
+    }
 
-const UserForm = () => {
-    const formik = useFormik<UserFormValues>({
-        initialValues: {
-            first_name: '',
-            last_name: '',
-            email: '',
-            password: '',
-            password_confirmation: '',
-        },
-        validationSchema: yup.object({
-            first_name: yup.string().required('First Name is required'),
-            last_name: yup.string().required('Last Name is required'),
-            email: yup.string().email('Email is invalid').required('Email is required'),
-            password: yup.string().required('Password is required'),
-            password_confirmation: yup
-                .string()
-                .oneOf([yup.ref('password')], 'Passwords do not match')
-                .required('Password Confirmation is required'),
-        }),
-        onSubmit: values => {
-            console.log(values)
-        },
-    })
+    const submitHandler = (values: UserFormValues) => {
+        console.log(values)
+    }
 
-    return (
-        <FormikProvider value={formik}>
-            <Form className='space-y-4'>
-                <div className='grid grid-cols-2 gap-4'>
-                    <TextFieldGroup label='First Name' name='first_name' />
-
-                    <TextFieldGroup label='Last Name' name='last_name' />
-                </div>
-
-                <TextFieldGroup label='Email' name='email' />
-
-                <TextFieldGroup label='Password' name='password' type='password' />
-
-                <TextFieldGroup type='password' label='Password Confirmation' name='password_confirmation' />
-
-                <Button type='submit' className='w-full'>
-                    Create User
-                </Button>
-            </Form>
-        </FormikProvider>
-    )
-}
-
-const CreateForm = () => {
-    return <UserForm />
+    return <UserFormWithFormik initialValues={initialValues} submitHandler={submitHandler} />
 }
 
 const FormView = () => {
+    const { t } = useTranslation()
+
     return (
-        <div className='flex min-h-screen items-center justify-center bg-gray-100'>
-            <Card className='w-full max-w-md'>
-                <CardHeader>
-                    <CardTitle className='text-center text-2xl font-bold'>Create New User</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <CreateForm />
-                </CardContent>
+        <div className='mx-auto max-w-2xl'>
+            <div className='mb-1 flex items-center space-x-1 text-neutral-800'>
+                <Link to={'/users'} className='text-neutral-500 hover:text-neutral-900'>
+                    <Button variant={'ghost'} size={'icon'}>
+                        <ArrowLeft />
+                    </Button>
+                </Link>
+
+                <h1 className='text-lg font-bold'>{t('New User')}</h1>
+            </div>
+
+            <Card className='w-full p-4'>
+                <CreateUserForm />
             </Card>
         </div>
     )
