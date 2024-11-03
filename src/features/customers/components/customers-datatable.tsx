@@ -1,6 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table'
 
-import { Trash, Edit, Trash2 } from 'lucide-react'
+import { Trash, Edit } from 'lucide-react'
 
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 
@@ -22,6 +22,7 @@ import { useSearchFromSearchParam } from '@/hooks/use-search-from-search-param'
 import { CustomerService } from '../service'
 import { Customer } from '../types'
 import { ActionsDropdown } from './actions-dropdown'
+import { DeleteManyCustomersDialog } from './delete-many-customers-dialog'
 
 export const CustomersDatatable = () => {
     const { t } = useTranslation()
@@ -97,6 +98,26 @@ export const CustomersDatatable = () => {
 
     const [selectedRows, setSelectedRows] = useState<number[]>([])
 
+    const searchForm = useFormik({
+        initialValues: { search },
+        onSubmit: values => {
+            setSearch(values.search)
+        },
+    })
+
+    const deleteCustomerMutation = useMutation({
+        mutationFn: CustomerService.deleteById,
+        meta: {
+            invalidates: [customerQueryKeys.all()],
+        },
+    })
+
+    useEffect(() => {
+        if (searchForm.values.search === '') {
+            clearSearch()
+        }
+    }, [searchForm.values.search])
+
     const dataTableProps: ControlledDatatableProps<Customer> = {
         columns,
         data: usersQuery.data?.data || [],
@@ -114,35 +135,6 @@ export const CustomersDatatable = () => {
         },
     }
 
-    const [isDeleteManyDialogOpen, setIsDeleteManyDialogOpen] = useState(false)
-
-    const searchForm = useFormik({
-        initialValues: { search },
-        onSubmit: values => {
-            setSearch(values.search)
-        },
-    })
-
-    const deleteCustomerMutation = useMutation({
-        mutationFn: CustomerService.deleteById,
-        meta: {
-            invalidates: [customerQueryKeys.all()],
-        },
-    })
-
-    const deleteManyCustomerMutation = useMutation({
-        mutationFn: CustomerService.deleteMany,
-        meta: {
-            invalidates: [customerQueryKeys.all()],
-        },
-    })
-
-    useEffect(() => {
-        if (searchForm.values.search === '') {
-            clearSearch()
-        }
-    }, [searchForm.values.search])
-
     return (
         <div className='w-full rounded-md bg-white p-4 shadow-lg'>
             <div className='mb-4 flex items-center justify-between'>
@@ -157,30 +149,7 @@ export const CustomersDatatable = () => {
                 </div>
 
                 <div className='flex items-center space-x-1'>
-                    <ConfirmDeleteDialog
-                        isOpen={isDeleteManyDialogOpen}
-                        setIsOpen={setIsDeleteManyDialogOpen}
-                        button={
-                            <Button
-                                variant='destructive'
-                                size='sm'
-                                disabled={selectedRows.length === 0}
-                                onClick={() => {
-                                    setIsDeleteManyDialogOpen(true)
-                                }}
-                            >
-                                <Trash2 className='mr-2 size-4' />
-                                {t('Delete Selected')}
-                            </Button>
-                        }
-                        onConfirm={async () => {
-                            await deleteManyCustomerMutation.mutateAsync(selectedRows)
-
-                            setSelectedRows([])
-
-                            setIsDeleteManyDialogOpen(false)
-                        }}
-                    />
+                    <DeleteManyCustomersDialog selectedRows={selectedRows} onSuccess={() => setSelectedRows([])} />
 
                     <Link to='/customers/create'>
                         <Button size='sm'>{t('Add Customer')}</Button>
