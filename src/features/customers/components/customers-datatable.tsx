@@ -1,28 +1,23 @@
 import { ColumnDef } from '@tanstack/react-table'
-
 import { Trash, Edit } from 'lucide-react'
-
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
-
 import { Button } from '@/components/ui/button'
-
 import { ControlledDataTable, type ControlledDatatableProps } from '@/components/datatables/datatable'
 import { usePagination } from '@/hooks/use-pagination'
 import { useEffect, useMemo, useState } from 'react'
-import { useMutation, useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useCustomersSorting } from '@/features/customers/hooks/use-customers-sorting'
-import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog'
 import { dateToMediumFormat } from '@/lib/dates/date-to-medium-format'
-import { Input } from '@/components/ui/input'
 import { useFormik } from 'formik'
 import { Link } from 'react-router-dom'
-import { customerQueryKeys, customerQueryOptions } from '../query-options'
+import { customerQueryOptions } from '../query-options'
 import { useSearchFromSearchParam } from '@/hooks/use-search-from-search-param'
-import { CustomerService } from '../service'
 import { Customer } from '../types'
 import { ActionsDropdown } from './actions-dropdown'
-import { DeleteManyCustomersDialog } from './delete-many-customers-dialog'
+import { DeleteManyCustomersDialog } from './dialogs/delete-many-customers-dialog'
+import { DeleteCustomerDialog } from './dialogs/delete-customer-dialog'
+import { useQuery } from '@tanstack/react-query'
+import { InlineSearchForm } from './inline-search-form'
 
 export const CustomersDatatable = () => {
     const { t } = useTranslation()
@@ -105,13 +100,6 @@ export const CustomersDatatable = () => {
         },
     })
 
-    const deleteCustomerMutation = useMutation({
-        mutationFn: CustomerService.deleteById,
-        meta: {
-            invalidates: [customerQueryKeys.all()],
-        },
-    })
-
     useEffect(() => {
         if (searchForm.values.search === '') {
             clearSearch()
@@ -139,13 +127,7 @@ export const CustomersDatatable = () => {
         <div className='w-full rounded-md bg-white p-4 shadow-lg'>
             <div className='mb-4 flex items-center justify-between'>
                 <div className='flex items-center space-x-2'>
-                    <form className='flex items-center space-x-2' onSubmit={searchForm.handleSubmit}>
-                        <Input placeholder='Search' {...searchForm.getFieldProps('search')} />
-
-                        <Button type='submit' disabled={searchForm.values.search === ''}>
-                            {t('Seach')}
-                        </Button>
-                    </form>
+                    <InlineSearchForm {...searchForm} />
                 </div>
 
                 <div className='flex items-center space-x-1'>
@@ -159,23 +141,7 @@ export const CustomersDatatable = () => {
 
             <ControlledDataTable<Customer> {...dataTableProps} />
 
-            <ConfirmDeleteDialog
-                isOpen={isDeleteDialogOpen}
-                setIsOpen={open => {
-                    if (open === false) setSelectedCustomerId(null)
-                    setIsDeleteDialogOpen(open)
-                }}
-                button={undefined}
-                onConfirm={async () => {
-                    if (selectedCustomerId) {
-                        await deleteCustomerMutation.mutateAsync(selectedCustomerId)
-                    }
-
-                    setSelectedCustomerId(null)
-
-                    setIsDeleteDialogOpen(false)
-                }}
-            />
+            <DeleteCustomerDialog id={selectedCustomerId} setId={setSelectedCustomerId} />
         </div>
     )
 }

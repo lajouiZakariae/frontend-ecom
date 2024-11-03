@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { LoadingCustomerForm } from '@/features/customers/components/loading-customer-form'
-import { UpdateCustomerForm } from '@/features/customers/components/update-customer-form'
+import { UpdateCustomerForm } from '@/features/customers/components/forms/update-customer-form'
 import { customerQueryOptions } from '@/features/customers/query-options'
 import { useQuery } from '@tanstack/react-query'
 import { ArrowLeft } from 'lucide-react'
@@ -18,7 +18,7 @@ const UpdateCustomerView = () => {
     return (
         <div className='mx-auto max-w-2xl'>
             <div className='mb-1 flex items-center space-x-1 text-neutral-800'>
-                <Link to={'/users'} className='text-neutral-500 hover:text-neutral-900'>
+                <Link to={'/customers'} className='text-neutral-500 hover:text-neutral-900'>
                     <Button variant={'ghost'} size={'icon'}>
                         <ArrowLeft />
                     </Button>

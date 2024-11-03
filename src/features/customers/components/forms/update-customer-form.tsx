@@ -1,4 +1,4 @@
-import { CustomerForm } from '@/features/customers/components/customer-form'
+import { CustomerForm } from '@/features/customers/components/forms/customer-form'
 import { customerQueryKeys } from '@/features/customers/query-options'
 import { CustomerService } from '@/features/customers/service'
 import { Customer, CustomerFormValues } from '@/features/customers/types'

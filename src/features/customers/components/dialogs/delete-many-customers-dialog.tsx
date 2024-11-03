@@ -1,13 +1,18 @@
-import { useState } from 'react'
-import { customerQueryKeys } from '../query-options'
-import { CustomerService } from '../service'
+import { FC, useState } from 'react'
+import { customerQueryKeys } from '../../query-options'
+import { CustomerService } from '../../service'
 import { useMutation } from '@tanstack/react-query'
 import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog'
 import { Button } from '@/components/ui/button'
 import { Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
-export const DeleteManyCustomersDialog = ({ selectedRows, onSuccess }) => {
+interface DeleteManyCustomersDialogProps {
+    selectedRows: number[]
+    onSuccess: () => void
+}
+
+export const DeleteManyCustomersDialog: FC<DeleteManyCustomersDialogProps> = ({ selectedRows, onSuccess }) => {
     const { t } = useTranslation()
 
     const [isDeleteManyDialogOpen, setIsDeleteManyDialogOpen] = useState(false)
