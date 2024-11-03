@@ -2,15 +2,15 @@ import { useValidatedSortingFromURLParams } from '@/hooks/use-validated-sorting-
 import { SortingState } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
 
-export const useUsersSorting = () => {
+export const useCustomersSorting = () => {
     const {
         values: validatedSortBy,
         setSortingToSearchParams,
         clearSortingFromSearchParams,
     } = useValidatedSortingFromURLParams({
         allowedSortByList: ['first_name', 'last_name', 'email'],
-        defaultSortBy: 'first_name',
-        defaultOrder: 'asc',
+        defaultSortBy: 'created_at',
+        defaultOrder: 'desc',
     })
 
     const [sorting, setSorting] = useState<SortingState>([

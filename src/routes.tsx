@@ -1,10 +1,11 @@
 import { Outlet, RouteObject } from 'react-router-dom'
 import LoginView from './views/login-view.tsx'
-import UsersView from './views/users-view.tsx'
 import { Dashboard } from './layouts/dashboard/dashboard.tsx'
-import FormView from './views/form-view.tsx'
 import { Guest } from './features/auth/components/guest.tsx'
 import { Auth } from './features/auth/components/auth.tsx'
+import CreateCustomerView from './views/customers/create-customer-view.tsx'
+import CustomersView from './views/customers/customers-view.tsx'
+import UpdateCustomerView from './views/customers/update-customer-view.tsx'
 
 export const routes: RouteObject[] = [
     {
@@ -18,12 +19,16 @@ export const routes: RouteObject[] = [
         ),
         children: [
             {
-                path: '/users',
-                Component: UsersView,
+                path: 'customers',
+                Component: CustomersView,
             },
             {
-                path: '/users/create',
-                Component: FormView,
+                path: 'customers/create',
+                Component: CreateCustomerView,
+            },
+            {
+                path: 'customers/:customerId/edit',
+                Component: UpdateCustomerView,
             },
         ],
     },

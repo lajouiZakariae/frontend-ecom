@@ -1,4 +1,4 @@
-import { QueryClient } from '@tanstack/react-query'
+import { matchQuery, MutationCache, QueryClient } from '@tanstack/react-query'
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -7,6 +7,16 @@ const queryClient = new QueryClient({
             retry: false,
         },
     },
+    mutationCache: new MutationCache({
+        onSuccess: (_data, _variables, _context, mutation) => {
+            queryClient.invalidateQueries({
+                predicate: query =>
+                    // invalidate all matching tags at once
+                    // or everything if no meta is provided
+                    mutation.meta?.invalidates?.some(queryKey => matchQuery({ queryKey }, query)) ?? true,
+            })
+        },
+    }),
 })
 
 export { queryClient }

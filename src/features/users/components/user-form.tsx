@@ -22,7 +22,7 @@ export const UserForm = ({ actionTitle, ...formik }: UserFormProps) => (
 
             <TextFieldGroup type='password' label='Password Confirmation' name='password_confirmation' />
 
-            <Button type='submit' className='w-full'>
+            <Button type='submit' className='w-full' disabled={formik.isSubmitting}>
                 {actionTitle}
             </Button>
         </Form>

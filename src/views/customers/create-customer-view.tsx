@@ -1,30 +1,11 @@
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { UserForm } from '@/features/users/components/user-form'
-import { UserFormValues } from '@/features/users/types/user-form-values'
-import { useFormik } from 'formik'
+import { CreateUserForm } from '@/features/users/components/create-user-form'
 import { ArrowLeft } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
-const CreateUserForm = () => {
-    const { t } = useTranslation()
-
-    const formik = useFormik<UserFormValues>({
-        initialValues: {
-            first_name: 'Hello',
-            last_name: 'This',
-            email: 'is',
-            password: 'Edit',
-            password_confirmation: 'Page',
-        },
-        onSubmit: () => {},
-    })
-
-    return <UserForm actionTitle={t('Create User')} {...formik} />
-}
-
-const FormView = () => {
+const CreateCustomerView = () => {
     const { t } = useTranslation()
 
     return (
@@ -46,4 +27,4 @@ const FormView = () => {
     )
 }
 
-export default FormView
+export default CreateCustomerView

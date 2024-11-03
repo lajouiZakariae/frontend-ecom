@@ -144,6 +144,8 @@ export const ControlledDataTable = <TData,>(dataTableProps: ControlledDatatableP
         }[sortintState]
     }
 
+    console.log(pagination.pageIndex)
+
     return (
         <>
             <div className='rounded-md border'>
