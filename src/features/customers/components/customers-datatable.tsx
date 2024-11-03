@@ -1,20 +1,14 @@
 import { ColumnDef } from '@tanstack/react-table'
 
-import { MoreHorizontal, Trash, Edit, Trash2 } from 'lucide-react'
+import { Trash, Edit, Trash2 } from 'lucide-react'
 
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 
 import { Button } from '@/components/ui/button'
 
 import { ControlledDataTable, type ControlledDatatableProps } from '@/components/datatables/datatable'
 import { usePagination } from '@/hooks/use-pagination'
-import { FC, PropsWithChildren, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useCustomersSorting } from '@/features/customers/hooks/use-customers-sorting'
@@ -26,35 +20,8 @@ import { Link } from 'react-router-dom'
 import { customerQueryKeys, customerQueryOptions } from '../query-options'
 import { useSearchFromSearchParam } from '@/hooks/use-search-from-search-param'
 import { CustomerService } from '../service'
-
-type Customer = {
-    id: number
-    first_name: string
-    last_name: string
-    email: string
-    created_at: string
-}
-
-const ActionsDropdown: FC<PropsWithChildren> = ({ children }) => {
-    const { t } = useTranslation()
-
-    return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant='ghost' className='h-8 w-8 p-0'>
-                    <span className='sr-only'>Open menu</span>
-
-                    <MoreHorizontal className='h-4 w-4' />
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align='end'>
-                <DropdownMenuLabel>{t('Actions')}</DropdownMenuLabel>
-
-                {children}
-            </DropdownMenuContent>
-        </DropdownMenu>
-    )
-}
+import { Customer } from '../types'
+import { ActionsDropdown } from './actions-dropdown'
 
 export const CustomersDatatable = () => {
     const { t } = useTranslation()
@@ -90,27 +57,25 @@ export const CustomersDatatable = () => {
                 id: 'actions',
                 cell: ({ row }) => {
                     return (
-                        <>
-                            <ActionsDropdown>
-                                <Link to={`/customers/${row.original.id}/edit`}>
-                                    <DropdownMenuItem className='cursor-pointer'>
-                                        <Edit className='mr-2 h-4 w-4' />
-                                        {t('Edit')}
-                                    </DropdownMenuItem>
-                                </Link>
-
-                                <DropdownMenuItem
-                                    className='cursor-pointer'
-                                    onClick={() => {
-                                        setIsDeleteDialogOpen(true)
-                                        setSelectedCustomerId(row.original.id)
-                                    }}
-                                >
-                                    <Trash className='mr-2 size-4' />
-                                    {t('Delete')}
+                        <ActionsDropdown>
+                            <Link to={`/customers/${row.original.id}/edit`}>
+                                <DropdownMenuItem className='cursor-pointer'>
+                                    <Edit className='mr-2 h-4 w-4' />
+                                    {t('Edit')}
                                 </DropdownMenuItem>
-                            </ActionsDropdown>
-                        </>
+                            </Link>
+
+                            <DropdownMenuItem
+                                className='cursor-pointer'
+                                onClick={() => {
+                                    setIsDeleteDialogOpen(true)
+                                    setSelectedCustomerId(row.original.id)
+                                }}
+                            >
+                                <Trash className='mr-2 size-4' />
+                                {t('Delete')}
+                            </DropdownMenuItem>
+                        </ActionsDropdown>
                     )
                 },
             },
@@ -208,8 +173,10 @@ export const CustomersDatatable = () => {
                                 {t('Delete Selected')}
                             </Button>
                         }
-                        onConfirm={() => {
-                            deleteManyCustomerMutation.mutateAsync(selectedRows)
+                        onConfirm={async () => {
+                            await deleteManyCustomerMutation.mutateAsync(selectedRows)
+
+                            setSelectedRows([])
 
                             setIsDeleteManyDialogOpen(false)
                         }}
@@ -230,10 +197,13 @@ export const CustomersDatatable = () => {
                     setIsDeleteDialogOpen(open)
                 }}
                 button={undefined}
-                onConfirm={() => {
+                onConfirm={async () => {
                     if (selectedCustomerId) {
-                        deleteCustomerMutation.mutateAsync(selectedCustomerId)
+                        await deleteCustomerMutation.mutateAsync(selectedCustomerId)
                     }
+
+                    setSelectedCustomerId(null)
+
                     setIsDeleteDialogOpen(false)
                 }}
             />
