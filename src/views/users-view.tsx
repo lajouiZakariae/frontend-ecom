@@ -1,4 +1,4 @@
-import { ColumnDef, SortingState } from '@tanstack/react-table'
+import { ColumnDef } from '@tanstack/react-table'
 
 import { MoreHorizontal, Trash, Edit, Trash2 } from 'lucide-react'
 
@@ -14,12 +14,12 @@ import { Button } from '@/components/ui/button'
 
 import { ControlledDataTable, type ControlledDatatableProps } from '@/components/datatables/datatable'
 import { usePagination } from '@/hooks/use-pagination'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { UserService } from '@/features/users/service'
 import { useTranslation } from 'react-i18next'
 import { MultiSelectDropdownFilter } from '@/components/filters/multi-select-dropdown-filter'
-import { useValidatedSortingFromURLParams } from './use-validated-sorting-from-url-params'
+import { useUsersSorting } from '@/features/users/hooks/use-users-sorting'
 
 type User = {
     id: number
@@ -95,34 +95,19 @@ const UsersView = () => {
 
     const { page, setPage } = usePagination()
 
-    const {
-        values: validatedSortBy,
-        setSortingToSearchParams,
-        clearSortingFromSearchParams,
-    } = useValidatedSortingFromURLParams({
-        allowedSortByList: ['first_name', 'last_name', 'email'],
-        defaultSortBy: 'first_name',
-        defaultOrder: 'asc',
-    })
-
-    const [sorting, setSorting] = useState<SortingState>([
-        {
-            id: validatedSortBy.sortBy,
-            desc: validatedSortBy.order === 'desc',
-        },
-    ])
-
-    useEffect(() => {
-        if (sorting[0]) {
-            setSortingToSearchParams(sorting[0].id, sorting[0].desc ? 'desc' : 'asc')
-        } else {
-            clearSortingFromSearchParams()
-        }
-    }, [sorting])
+    const { sorting, setSorting } = useUsersSorting()
 
     const sortBy = sorting.at(0)?.id
 
     const order = sorting.at(0)?.desc ? 'desc' : 'asc'
+
+    const statusOptions = [
+        { label: 'Active', value: 'active' },
+        { label: 'Banned', value: 'banned' },
+        { label: 'Pending', value: 'pending' },
+    ]
+
+    const [selectedOptions, setSelectedOptions] = useState<typeof statusOptions>([])
 
     const usersQuery = useQuery({
         queryKey: ['users', { page, sortBy, order }],
@@ -151,14 +136,6 @@ const UsersView = () => {
             setSelectedRows(selectedRows.map(Number))
         },
     }
-
-    const statusOptions = [
-        { label: 'Active', value: 'active' },
-        { label: 'Banned', value: 'banned' },
-        { label: 'Pending', value: 'pending' },
-    ]
-
-    const [selectedOptions, setSelectedOptions] = useState<typeof statusOptions>([])
 
     return (
         <div className='w-full rounded-md bg-white p-4 shadow-lg'>
