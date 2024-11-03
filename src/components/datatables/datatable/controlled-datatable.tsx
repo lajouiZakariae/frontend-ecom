@@ -17,6 +17,7 @@ import { Input } from '@/components/ui/input'
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { SpinnerIcon } from '@/components/icons'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export interface SortOptions<TData> {
     sortBy: keyof TData
@@ -210,30 +211,52 @@ export const ControlledDataTable = <TData,>(dataTableProps: ControlledDatatableP
 
             <div className='mt-4 flex flex-col items-center justify-between space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0'>
                 <div className='flex items-center space-x-2'>
-                    <Button
-                        variant='outline'
-                        className='h-8 w-8 p-0'
-                        onClick={() => table.previousPage()}
-                        disabled={!table.getCanPreviousPage()}
-                    >
-                        <span className='sr-only'>Go to previous page</span>
-                        <ChevronLeft className='h-4 w-4' />
-                    </Button>
+                    {isFetching ? (
+                        <>
+                            <Button variant='outline' className='size-8 p-0' disabled>
+                                <span className='sr-only'>Go to previous page</span>
+                                <ChevronLeft className='size-4' />
+                            </Button>
 
-                    <span className='text-sm font-medium'>
-                        Page {pagination.pageIndex + 1} of {table.getPageCount()}
-                    </span>
+                            <span className='flex items-center text-sm font-medium'>
+                                Page <Skeleton className='mx-1 inline-block h-5 w-4' /> of{' '}
+                                <Skeleton className='mx-1 inline-block h-5 w-4' />
+                            </span>
 
-                    <Button
-                        variant='outline'
-                        className='h-8 w-8 p-0'
-                        onClick={() => table.nextPage()}
-                        disabled={!table.getCanNextPage()}
-                    >
-                        <span className='sr-only'>Go to next page</span>
-                        <ChevronRight className='h-4 w-4' />
-                    </Button>
+                            <Button variant='outline' className='size-8 p-0' disabled>
+                                <span className='sr-only'>Go to next page</span>
+                                <ChevronRight className='size-4' />
+                            </Button>
+                        </>
+                    ) : (
+                        <>
+                            <Button
+                                variant='outline'
+                                className='h-8 w-8 p-0'
+                                onClick={() => table.previousPage()}
+                                disabled={!table.getCanPreviousPage()}
+                            >
+                                <span className='sr-only'>Go to previous page</span>
+                                <ChevronLeft className='h-4 w-4' />
+                            </Button>
+
+                            <span className='text-sm font-medium'>
+                                Page {pagination.pageIndex + 1} of {table.getPageCount()}
+                            </span>
+
+                            <Button
+                                variant='outline'
+                                className='h-8 w-8 p-0'
+                                onClick={() => table.nextPage()}
+                                disabled={!table.getCanNextPage()}
+                            >
+                                <span className='sr-only'>Go to next page</span>
+                                <ChevronRight className='h-4 w-4' />
+                            </Button>
+                        </>
+                    )}
                 </div>
+
                 <form
                     onSubmit={ev => {
                         ev.preventDefault()
