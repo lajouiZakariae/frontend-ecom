@@ -12,7 +12,7 @@ import {
 
 import { Button } from '@/components/ui/button'
 
-import { DataTable, DatatableProps } from '@/components/datatables/datatable'
+import { ControlledDataTable, type ControlledDatatableProps } from '@/components/datatables/datatable'
 import { usePagination } from '@/hooks/use-pagination'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
@@ -112,7 +112,7 @@ const UsersView = () => {
 
     const [selectedRows, setSelectedRows] = useState<number[]>([])
 
-    const dataTableProps: DatatableProps<User> = {
+    const dataTableProps: ControlledDatatableProps<User> = {
         columns,
         data: usersQuery.data?.data || data,
         isError: usersQuery.isError,
@@ -153,7 +153,7 @@ const UsersView = () => {
                     Delete Selected
                 </Button>
             </div>
-            <DataTable<User> {...dataTableProps} />
+            <ControlledDataTable<User> {...dataTableProps} />
         </div>
     )
 }

@@ -1,25 +1,27 @@
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { UserFormWithFormik } from '@/features/users/components/user-form-with-formik'
+import { UserForm } from '@/features/users/components/user-form'
 import { UserFormValues } from '@/features/users/types/user-form-values'
+import { useFormik } from 'formik'
 import { ArrowLeft } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
 const CreateUserForm = () => {
-    const initialValues = {
-        first_name: 'Hello',
-        last_name: 'This',
-        email: 'is',
-        password: 'Edit',
-        password_confirmation: 'Page',
-    }
+    const { t } = useTranslation()
 
-    const submitHandler = (values: UserFormValues) => {
-        console.log(values)
-    }
+    const formik = useFormik<UserFormValues>({
+        initialValues: {
+            first_name: 'Hello',
+            last_name: 'This',
+            email: 'is',
+            password: 'Edit',
+            password_confirmation: 'Page',
+        },
+        onSubmit: () => {},
+    })
 
-    return <UserFormWithFormik initialValues={initialValues} submitHandler={submitHandler} />
+    return <UserForm actionTitle={t('Create User')} {...formik} />
 }
 
 const FormView = () => {

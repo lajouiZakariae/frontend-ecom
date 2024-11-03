@@ -23,7 +23,7 @@ export interface SortOptions<TData> {
     order: 'asc' | 'desc'
 }
 
-export interface DatatableProps<TData> {
+export interface ControlledDatatableProps<TData> {
     columns: ColumnDef<TData>[]
     data: TData[]
     onRowSelectedChange: (rowSelection: string[]) => void
@@ -45,7 +45,7 @@ const ErrorMessage = ({ message }: { message: string }) => (
     </Alert>
 )
 
-export const DataTable = <TData,>(dataTableProps: DatatableProps<TData>) => {
+export const ControlledDataTable = <TData,>(dataTableProps: ControlledDatatableProps<TData>) => {
     const {
         columns,
         data,
