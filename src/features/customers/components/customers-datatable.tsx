@@ -13,11 +13,11 @@ import { Link } from 'react-router-dom'
 import { customerQueryOptions } from '../query-options'
 import { useSearchFromSearchParam } from '@/hooks/use-search-from-search-param'
 import { Customer } from '../types'
-import { ActionsDropdown } from './actions-dropdown'
+import { ActionsDropdown } from '@/components/actions-dropdown'
 import { DeleteManyCustomersDialog } from './dialogs/delete-many-customers-dialog'
 import { DeleteCustomerDialog } from './dialogs/delete-customer-dialog'
 import { useQuery } from '@tanstack/react-query'
-import { InlineSearchForm } from './inline-search-form'
+import { InlineSearchForm } from '@/components/inline-search-form'
 
 export const CustomersDatatable = () => {
     const { t } = useTranslation()

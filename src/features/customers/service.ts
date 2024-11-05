@@ -1,5 +1,5 @@
 import { apiClient } from '@/api-client'
-import { UserFormValues } from './types'
+import { CustomerFormValues } from './types'
 
 export class CustomerService {
     static async getPaginatedAndFilteredCustomers(params: Record<string, unknown>) {
@@ -7,11 +7,11 @@ export class CustomerService {
         return data
     }
 
-    static async createCustomer(data: UserFormValues) {
+    static async createCustomer(data: CustomerFormValues) {
         return await apiClient.post('users', data)
     }
 
-    static async updateCustomer(id: number, data: UserFormValues) {
+    static async updateCustomer(id: number, data: CustomerFormValues) {
         return await apiClient.put(`users/${id}`, data)
     }
 

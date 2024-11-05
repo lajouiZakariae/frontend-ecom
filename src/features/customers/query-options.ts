@@ -4,6 +4,7 @@ import { CustomerService } from './service'
 export const customerQueryKeys = {
     all: () => ['customers'],
     filtered: (params: Record<string, unknown>) => [...customerQueryKeys.all(), params],
+    findById: (categoryId: number) => [...customerQueryKeys.all(), categoryId],
 }
 
 export const customerQueryOptions = {
@@ -15,7 +16,7 @@ export const customerQueryOptions = {
 
     findById: (customerId: number) =>
         queryOptions({
-            queryKey: ['customers', customerId],
+            queryKey: customerQueryKeys.findById(customerId),
             queryFn: async () => await CustomerService.getCustomerById(customerId),
         }),
 }

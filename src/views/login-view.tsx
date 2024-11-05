@@ -20,7 +20,7 @@ const LoginView = () => {
     const loginMutation = useMutation({
         mutationFn: async (credentials: Credentials) => await AuthApi.login(credentials),
         onSuccess: data => {
-            const userData = data.user
+            const userData = data.data
 
             const userToken = data.meta.token
 

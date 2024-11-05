@@ -6,6 +6,7 @@ import { Auth } from './features/auth/components/auth.tsx'
 import CreateCustomerView from './views/customers/create-customer-view.tsx'
 import CustomersView from './views/customers/customers-view.tsx'
 import UpdateCustomerView from './views/customers/update-customer-view.tsx'
+import CategoriesView from './views/categories/categories-view.tsx'
 
 export const routes: RouteObject[] = [
     {
@@ -30,6 +31,7 @@ export const routes: RouteObject[] = [
                 path: 'customers/:customerId/edit',
                 Component: UpdateCustomerView,
             },
+            { path: 'categories', Component: CategoriesView },
         ],
     },
     {
