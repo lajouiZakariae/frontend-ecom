@@ -30,22 +30,22 @@ export const CustomersDatatable = () => {
         () => [
             {
                 accessorKey: 'first_name',
-                header: 'First Name',
+                header: t('First name'),
                 id: 'first_name',
             },
             {
                 accessorKey: 'last_name',
-                header: 'Last Name',
+                header: t('Last name'),
                 id: 'last_name',
             },
             {
                 accessorKey: 'email',
-                header: 'Email',
+                header: t('Email'),
                 id: 'email',
             },
             {
                 accessorKey: 'created_at',
-                header: 'Date Created',
+                header: t('Date created'),
                 id: 'created_at',
                 cell: ({ row }) => dateToMediumFormat(new Date(row.original.created_at)),
             },
