@@ -6,7 +6,7 @@ import { ControlledDataTable, type ControlledDatatableProps } from '@/components
 import { usePagination } from '@/hooks/use-pagination'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useCustomersSorting } from '@/features/categories/hooks/use-categories-sorting'
+import { useCategoriesSorting } from '@/features/categories/hooks/use-categories-sorting'
 import { dateToMediumFormat } from '@/lib/dates/date-to-medium-format'
 import { useFormik } from 'formik'
 import { Link } from 'react-router-dom'
@@ -86,7 +86,7 @@ export const CategoriesDatatable = () => {
 
     const { page, setPage } = usePagination()
 
-    const { sorting, setSorting } = useCustomersSorting()
+    const { sorting, setSorting } = useCategoriesSorting()
 
     const sortBy = sorting.at(0)?.id
 

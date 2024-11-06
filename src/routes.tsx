@@ -23,15 +23,20 @@ export const routes: RouteObject[] = [
         children: [
             {
                 path: 'customers',
-                Component: CustomersView,
-            },
-            {
-                path: 'customers/create',
-                Component: CreateCustomerView,
-            },
-            {
-                path: 'customers/:customerId/edit',
-                Component: UpdateCustomerView,
+                children: [
+                    {
+                        index: true,
+                        Component: CustomersView,
+                    },
+                    {
+                        path: 'create',
+                        Component: CreateCustomerView,
+                    },
+                    {
+                        path: ':customerId/edit',
+                        Component: UpdateCustomerView,
+                    },
+                ],
             },
             {
                 path: 'categories',

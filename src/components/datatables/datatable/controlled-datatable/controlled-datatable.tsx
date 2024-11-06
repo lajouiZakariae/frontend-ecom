@@ -1,150 +1,36 @@
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
-import {
-    ColumnDef,
-    flexRender,
-    getCoreRowModel,
-    PaginationState,
-    SortingState,
-    TableOptions,
-    useReactTable,
-} from '@tanstack/react-table'
+import { flexRender } from '@tanstack/react-table'
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { AlertCircle, ArrowDown, ArrowUp, ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { SpinnerIcon } from '@/components/icons'
 import { Skeleton } from '@/components/ui/skeleton'
+import { ErrorMessage } from '../error-message'
+import { DatatableSortingIcon } from '../datatable-sorting-icon'
+import { useControlledDatatable, UseControlledDatatableOptions } from './use-controlled-datatable'
+import { getPaginationInfoTextDefault } from './pagination-information'
 
-export interface SortOptions<TData> {
-    sortBy: keyof TData
-    order: 'asc' | 'desc'
-}
-
-export interface ControlledDatatableProps<TData> {
-    columns: ColumnDef<TData>[]
-    data: TData[]
-    onRowSelectedChange: (rowSelection: string[]) => void
-    page: number
-    pageCount: number
-    sorting: SortingState
-    setSorting: Dispatch<SetStateAction<SortingState>>
-    getRowId: TableOptions<TData>['getRowId']
-    onPageChange?: (page: number) => void
+export interface ControlledDatatableProps<TData> extends UseControlledDatatableOptions<TData> {
     noResultsMessage?: string
     isFetching?: boolean
     isError?: boolean
+    goToPageText?: string
+    getPaginationInfoText?: (params: { page: number; totalPages: number }) => string
 }
-
-const ErrorMessage = ({ message }: { message: string }) => (
-    <Alert variant='destructive'>
-        <AlertCircle className='h-4 w-4' />
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>{message}</AlertDescription>
-    </Alert>
-)
 
 export const ControlledDataTable = <TData,>(dataTableProps: ControlledDatatableProps<TData>) => {
     const {
-        columns,
-        data,
-        onRowSelectedChange,
-        page,
-        pageCount,
-        onPageChange,
-        getRowId,
-        sorting,
-        setSorting,
+        getPaginationInfoText = getPaginationInfoTextDefault,
         noResultsMessage = 'No results',
         isFetching = false,
         isError = false,
+        goToPageText = 'Go',
     } = dataTableProps
 
-    const columnsWithMultiSelect = useMemo(
-        () => [
-            {
-                id: 'select',
-                header: ({ table }) => (
-                    <Checkbox
-                        checked={table.getIsAllPageRowsSelected()}
-                        onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
-                        aria-label='Select all'
-                    />
-                ),
-                cell: ({ row }) => (
-                    <Checkbox
-                        checked={row.getIsSelected()}
-                        onCheckedChange={value => row.toggleSelected(!!value)}
-                        aria-label='Select row'
-                    />
-                ),
-                enableSorting: false,
-                enableHiding: false,
-            },
-            ...columns,
-        ],
-        [columns],
-    )
-
-    const [rowSelection, setRowSelection] = useState({})
-
-    const [pagination, setPagination] = useState<PaginationState>({
-        pageIndex: page - 1,
-        pageSize: pageCount,
-    })
-
-    const table = useReactTable({
-        data,
-        columns: columnsWithMultiSelect,
-        pageCount,
-        state: {
-            rowSelection,
-            sorting,
-            pagination,
-        },
-        onRowSelectionChange: setRowSelection,
-        getCoreRowModel: getCoreRowModel(),
-        onPaginationChange: setPagination,
-        onSortingChange: setSorting,
-        getRowId: getRowId,
-        manualPagination: true,
-        manualSorting: true,
-        enableMultiSort: true,
-    })
-
-    useEffect(() => {
-        onPageChange?.(pagination.pageIndex + 1)
-    }, [pagination.pageIndex])
-
-    useEffect(() => {
-        onRowSelectedChange?.(
-            Object.entries(rowSelection)
-                .filter(([, value]) => value === true)
-                .map(([key]) => key),
-        )
-    }, [rowSelection])
-
-    const [paginationInputValue, setPaginationInputValue] = useState('')
-
-    const applyPagination = (page: number) => {
-        table.setPageIndex(page)
-    }
-
-    const renderSortingIcon = (sortintState: 'asc' | 'desc' | false) => {
-        if (sortintState === false) {
-            return <ArrowUpDown className='size-4' />
-        }
-
-        return {
-            asc: <ArrowDown className='size-4' />,
-            desc: <ArrowUp className='size-4' />,
-        }[sortintState]
-    }
-
-    console.log(pagination.pageIndex)
+    const { columns, table, pagination, paginationInputValue, setPaginationInputValue, applyPagination } =
+        useControlledDatatable(dataTableProps)
 
     return (
         <>
@@ -164,9 +50,9 @@ export const ControlledDataTable = <TData,>(dataTableProps: ControlledDatatableP
                                                 {header.isPlaceholder
                                                     ? null
                                                     : flexRender(header.column.columnDef.header, header.getContext())}
-                                                {header.column.getCanSort()
-                                                    ? renderSortingIcon(header.column.getIsSorted())
-                                                    : null}
+                                                {header.column.getCanSort() ? (
+                                                    <DatatableSortingIcon sortintState={header.column.getIsSorted()} />
+                                                ) : null}
                                             </Button>
                                         )}
                                     </TableHead>
@@ -178,13 +64,13 @@ export const ControlledDataTable = <TData,>(dataTableProps: ControlledDatatableP
                     <TableBody>
                         {isError ? (
                             <TableRow>
-                                <TableCell colSpan={columnsWithMultiSelect.length} className='p-4'>
+                                <TableCell colSpan={columns.length} className='p-4'>
                                     <ErrorMessage message={'Failed to load the data'} />
                                 </TableCell>
                             </TableRow>
                         ) : isFetching ? (
                             <TableRow>
-                                <TableCell colSpan={columnsWithMultiSelect.length}>
+                                <TableCell colSpan={columns.length}>
                                     <div className='flex min-h-80 w-full items-center justify-center'>
                                         <SpinnerIcon className='m-auto h-8 w-8 animate-spin' />
                                     </div>
@@ -221,7 +107,9 @@ export const ControlledDataTable = <TData,>(dataTableProps: ControlledDatatableP
                             </Button>
 
                             <span className='flex items-center text-sm font-medium'>
-                                Page <Skeleton className='mx-1 inline-block h-5 w-4' /> of{' '}
+                                <Skeleton className='mx-1 inline-block h-5 w-4' />
+                                <Skeleton className='mx-1 inline-block h-5 w-4' />
+                                <Skeleton className='mx-1 inline-block h-5 w-4' />
                                 <Skeleton className='mx-1 inline-block h-5 w-4' />
                             </span>
 
@@ -243,7 +131,10 @@ export const ControlledDataTable = <TData,>(dataTableProps: ControlledDatatableP
                             </Button>
 
                             <span className='text-sm font-medium'>
-                                Page {pagination.pageIndex + 1} of {table.getPageCount()}
+                                {getPaginationInfoText({
+                                    page: pagination.pageIndex + 1,
+                                    totalPages: table.getPageCount(),
+                                })}
                             </span>
 
                             <Button
@@ -276,7 +167,7 @@ export const ControlledDataTable = <TData,>(dataTableProps: ControlledDatatableP
                             max={table.getPageCount()}
                         />
 
-                        <Button type='submit'>Go</Button>
+                        <Button type='submit'>{goToPageText}</Button>
                     </div>
                 </form>
             </div>

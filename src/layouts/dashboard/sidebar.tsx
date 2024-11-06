@@ -12,7 +12,6 @@ const Sidebar = () => {
         if (window.innerWidth < 1024 && !isSidebarOpen) {
             toggleSidebar()
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return (

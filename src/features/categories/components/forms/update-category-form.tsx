@@ -36,7 +36,9 @@ export const UpdateCategoryForm: FC<UpdateCategoryFormProps> = ({ category }) =>
             const formData = new FormData()
 
             for (const key of Object.keys(values) as (keyof CategoryFormValues)[]) {
-                formData.append(key, values[key] as string | File)
+                if (values[key] !== null) {
+                    formData.append(key, values[key] as string | File)
+                }
             }
 
             await updateCategoryMutation.mutateAsync(formData)

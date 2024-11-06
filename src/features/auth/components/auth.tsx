@@ -10,8 +10,6 @@ interface AuthProps {
 export const Auth: FC<AuthProps> = ({ children, fallback }) => {
     const user = useUserFromStore()
 
-    console.log(user)
-
     if (!user) {
         return fallback || <Navigate to='/login' />
     }

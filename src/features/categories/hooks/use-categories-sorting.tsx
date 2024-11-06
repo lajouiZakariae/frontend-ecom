@@ -2,7 +2,7 @@ import { useValidatedSortingFromURLParams } from '@/hooks/use-validated-sorting-
 import { SortingState } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
 
-export const useCustomersSorting = () => {
+export const useCategoriesSorting = () => {
     const {
         values: validatedSortBy,
         setSortingToSearchParams,

@@ -13,7 +13,9 @@ const queryClient = new QueryClient({
                 predicate: query =>
                     // invalidate all matching tags at once
                     // or everything if no meta is provided
-                    mutation.meta?.invalidates?.some(queryKey => matchQuery({ queryKey }, query)) ?? true,
+                    Array.isArray(mutation.meta?.invalidates)
+                        ? mutation.meta.invalidates.some(queryKey => matchQuery({ queryKey }, query))
+                        : true,
             })
         },
     }),

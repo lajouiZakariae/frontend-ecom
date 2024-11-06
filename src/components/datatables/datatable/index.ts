@@ -1,1 +1,1 @@
-export * from './controlled-datatable'
+export * from './controlled-datatable/controlled-datatable'
