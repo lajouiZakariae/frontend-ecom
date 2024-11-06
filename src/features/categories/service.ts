@@ -1,5 +1,4 @@
 import { apiClient } from '@/api-client'
-import { CategoryFormValues } from './types'
 
 export class CategoryService {
     static async getPaginatedAndFilteredCategories(params: Record<string, unknown>) {
@@ -7,12 +6,18 @@ export class CategoryService {
         return data
     }
 
-    static async createCategory(data: CategoryFormValues) {
-        return await apiClient.post('categories', data)
+    static async createCategory(data: FormData) {
+        return await apiClient.post('categories', data, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        })
     }
 
-    static async updateCategory(id: number, data: CategoryFormValues) {
-        return await apiClient.put(`categories/${id}`, data)
+    static async updateCategory(id: number, data: FormData) {
+        data.append('_method', 'PUT')
+
+        return await apiClient.post(`categories/${id}`, data)
     }
 
     static async getCategoryById(customerId: number) {

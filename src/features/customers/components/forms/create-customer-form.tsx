@@ -33,5 +33,18 @@ export const CreateCustomerForm = () => {
         onSubmit: async values => await createCustomerMutation.mutateAsync(values),
     })
 
-    return <CustomerForm actionTitle={formik.isSubmitting ? t('Creating User...') : t('Create User')} {...formik} />
+    return (
+        <CustomerForm
+            actionTitle={
+                formik.isSubmitting
+                    ? `${t('Creating {{resource}}', {
+                          resource: t('Customer'),
+                      })}...`
+                    : t('Create {{resource}}', {
+                          resource: t('Customer'),
+                      })
+            }
+            {...formik}
+        />
+    )
 }

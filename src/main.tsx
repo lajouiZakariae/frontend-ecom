@@ -8,6 +8,7 @@ import { AuthenticationInitializer } from './features/auth/components/init-auth.
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from './query-client.ts'
 import { routes } from './routes.tsx'
+import './i18next.ts'
 
 const router = createBrowserRouter(routes)
 

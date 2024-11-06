@@ -53,6 +53,6 @@ export interface ImageUplaodProps {
                 [k: string]: ValidationError
             }
         }>
-        ImgRenderer?: FC<{ imgSrc: string }>
+        ImgRenderer?: FC<{ imgSrc: string; clearImage: () => void }>
     }
 }

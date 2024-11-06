@@ -5,11 +5,19 @@ import { ImageUplaodProps } from './types'
 import { useImageUpload } from './hooks/image-upload-hook'
 import { DefaultImageRenderer } from './components/DefaultImageRenderer'
 
-export const ImageUplaod: FC<ImageUplaodProps> = props => {
+export const ImageUpload: FC<ImageUplaodProps> = props => {
     const { components, imgClassName } = props
 
-    const { uploadedImage, validationErrors, imgSrc, handleDragLeave, handleDragOver, handleDrop, handleFileSelect } =
-        useImageUpload(props)
+    const {
+        uploadedImage,
+        validationErrors,
+        imgSrc,
+        handleDragLeave,
+        handleDragOver,
+        handleDrop,
+        handleFileSelect,
+        clearImage,
+    } = useImageUpload(props)
 
     const { UploadErrorUI, UploadPlaceholder, ImgRenderer } = components || {}
 
@@ -24,9 +32,9 @@ export const ImageUplaod: FC<ImageUplaodProps> = props => {
 
     const renderedImage = imgSrc ? (
         ImgRenderer ? (
-            <ImgRenderer imgSrc={imgSrc} />
+            <ImgRenderer imgSrc={imgSrc} clearImage={clearImage} />
         ) : (
-            <DefaultImageRenderer imgSrc={imgSrc} imgClassName={imgClassName} />
+            <DefaultImageRenderer imgSrc={imgSrc} imgClassName={imgClassName} clearImage={clearImage} />
         )
     ) : null
 
@@ -43,7 +51,7 @@ export const ImageUplaod: FC<ImageUplaodProps> = props => {
             return errorOnUplaodComponent
         }
 
-        if (uploadedImage && imgSrc) {
+        if (uploadedImage || imgSrc) {
             return renderedImage
         }
 

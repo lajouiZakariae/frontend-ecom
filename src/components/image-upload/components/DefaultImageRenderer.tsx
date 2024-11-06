@@ -4,6 +4,7 @@ import { UploadIcon } from '../icons/upload-icon'
 interface DefaultImageRendererProps {
     imgSrc: string
     imgClassName?: string
+    clearImage: () => void
 }
 
 export const DefaultImageRenderer: FC<DefaultImageRendererProps> = ({ imgSrc, imgClassName }) => (

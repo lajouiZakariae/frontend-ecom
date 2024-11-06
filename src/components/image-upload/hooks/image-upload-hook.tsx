@@ -16,6 +16,8 @@ export const useImageUpload = (props: ImageUplaodProps) => {
 
     const [isDragOver, setIsDragOver] = useState(false)
 
+    const [defaultImageState, setDefaultImageState] = useState(defaultImage)
+
     // Prepare validation rules
     const preparedValidationRules = useMemo(
         () => ({
@@ -53,13 +55,19 @@ export const useImageUpload = (props: ImageUplaodProps) => {
         uploadFile,
     })
 
+    const clearImage = () => {
+        setUploadedImage(undefined)
+        setDefaultImageState(undefined)
+        setValidationErrors(undefined)
+    }
+
     const imgSrc = useMemo(() => {
         if (uploadedImage && !validationErrors) {
             return URL.createObjectURL(uploadedImage.getFile())
         }
 
-        return defaultImage
-    }, [uploadedImage, validationErrors, defaultImage])
+        return defaultImageState
+    }, [uploadedImage, validationErrors, defaultImageState])
 
     return {
         uploadedImage,
@@ -70,5 +78,6 @@ export const useImageUpload = (props: ImageUplaodProps) => {
         handleDragOver,
         handleDrop,
         handleFileSelect,
+        clearImage,
     }
 }

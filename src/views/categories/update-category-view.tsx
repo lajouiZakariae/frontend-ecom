@@ -1,24 +1,24 @@
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { LoadingCustomerForm } from '@/features/customers/components/forms/loading-customer-form'
-import { UpdateCustomerForm } from '@/features/customers/components/forms/update-customer-form'
-import { customerQueryOptions } from '@/features/customers/query-options'
+import { LoadingCategoryForm } from '@/features/categories/components/forms/loading-category-form'
+import { UpdateCategoryForm } from '@/features/categories/components/forms/update-category-form'
+import { categoryQueryOptions } from '@/features/categories/query-options'
 import { useQuery } from '@tanstack/react-query'
 import { ArrowLeft } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link, useParams } from 'react-router-dom'
 
-const UpdateCustomerView = () => {
+const UpdateCategoryView = () => {
     const { t } = useTranslation()
 
-    const { customerId } = useParams()
+    const { categoryId } = useParams()
 
-    const customerUserQuery = useQuery(customerQueryOptions.findById(Number(customerId)))
+    const categoryUserQuery = useQuery(categoryQueryOptions.findById(Number(categoryId)))
 
     return (
         <div className='mx-auto max-w-2xl'>
             <div className='mb-1 flex items-center space-x-1 text-neutral-800'>
-                <Link to={'/customers'} className='text-neutral-500 hover:text-neutral-900'>
+                <Link to={'/categories'} className='text-neutral-500 hover:text-neutral-900'>
                     <Button variant={'ghost'} size={'icon'}>
                         <ArrowLeft />
                     </Button>
@@ -26,20 +26,20 @@ const UpdateCustomerView = () => {
 
                 <h1 className='text-lg font-bold'>
                     {t('Update {{resource}}', {
-                        resource: t('Customer'),
+                        resource: t('Category'),
                     })}
                 </h1>
             </div>
 
             <Card className='w-full p-4'>
-                {customerUserQuery.isPending ? (
-                    <LoadingCustomerForm />
+                {categoryUserQuery.isPending ? (
+                    <LoadingCategoryForm />
                 ) : (
-                    <UpdateCustomerForm customer={customerUserQuery.data.data} />
+                    <UpdateCategoryForm category={categoryUserQuery.data.data} />
                 )}
             </Card>
         </div>
     )
 }
 
-export default UpdateCustomerView
+export default UpdateCategoryView

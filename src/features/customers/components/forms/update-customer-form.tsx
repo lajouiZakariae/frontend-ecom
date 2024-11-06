@@ -38,5 +38,5 @@ export const UpdateCustomerForm: FC<UpdateCustomerFormProps> = ({ customer }) =>
         onSubmit: async values => await updateCustomerMutation.mutateAsync(values),
     })
 
-    return <CustomerForm actionTitle={formik.isSubmitting ? t('Creating User...') : t('Create User')} {...formik} />
+    return <CustomerForm actionTitle={formik.isSubmitting ? `${t('Updating')}...` : t('Update')} {...formik} />
 }

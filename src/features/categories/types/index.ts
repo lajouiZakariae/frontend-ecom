@@ -1,7 +1,7 @@
 import { Image } from '@/types'
 
 export interface CategoryFormValues {
-    image: File
+    image: File | null
     name: string
 }
 
