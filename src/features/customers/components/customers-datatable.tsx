@@ -121,6 +121,9 @@ export const CustomersDatatable = () => {
         onRowSelectedChange: selectedRows => {
             setSelectedRows(selectedRows.map(Number))
         },
+        getPaginationInfoText: ({ page, totalPages }) => {
+            return t('Showing {{page}} of {{totalPages}} pages', { page, totalPages })
+        },
     }
 
     return (

@@ -3,19 +3,32 @@ import { useIsSidebarOpen } from '@/layouts/dashboard/hooks/use-is-sidebar-open'
 import { MenuIcon } from '@/icons/menu-icon'
 
 import PerfectScrollbar from 'react-perfect-scrollbar'
-import { FC, ReactNode, SVGProps, useEffect, useState } from 'react'
+import { FC, SVGProps, useEffect, useState } from 'react'
 import { NavLink, To } from 'react-router-dom'
 import AnimateHeight from 'react-animate-height'
-import { IconMenuDashboard } from '@/icons/icon-menu-dashboard'
 import { IconCaretDown } from '@/icons/icon-caret-down'
-import { cn } from '@/lib/utils'
-import { User2Icon } from 'lucide-react'
+import { MinusIcon, User2Icon } from 'lucide-react'
 
 interface SidebarItemProps {
     text: string
     to: To
     active: boolean
-    icon: ReactNode
+    Icon: FC<SVGProps<SVGSVGElement>>
+}
+
+const SidebarItem = ({ text, to, active, Icon }: SidebarItemProps) => {
+    return (
+        <li className='menu nav-item'>
+            <NavLink to={to} className='group'>
+                <div className='flex items-center'>
+                    <Icon className='shrink-0 group-hover:!text-primary' />
+                    <span className='dark:group-hover:text-white-dark text-black dark:text-[#506690] ltr:pl-3 rtl:pr-3'>
+                        {text}
+                    </span>
+                </div>
+            </NavLink>
+        </li>
+    )
 }
 
 interface SidebarItemWithDropDownProps {
@@ -59,59 +72,6 @@ const SidebarItemWithDropDownProps = ({ text, Icon, childrenRoutes }: SidebarIte
             </AnimateHeight>
         </li>
     )
-    // return (
-    // <li>
-    //     <button
-    //         type='button'
-    //         className={cn(
-    //             'group mb-1 flex w-full items-center justify-between overflow-hidden whitespace-nowrap rounded-md p-2.5 text-[#506690] hover:bg-[#000]/[0.08] hover:text-black dark:hover:bg-[#181f32] dark:hover:text-[#e0e6ed]',
-    //             {
-    //                 'bg-[#000]/[0.08] text-black dark:bg-[#181f32] dark:text-[#e0e6ed]': isSidebarItemActive,
-    //             },
-    //         )}
-    //         onClick={() => setIsOpen(isOpen => !isOpen)}
-    //     >
-    //         <div className='flex items-center'>
-    //             <Icon className='size-5 shrink-0 text-black/50 group-hover:!text-[#4361ee] dark:text-white/50' />
-
-    //             <span
-    //                 className={cn(
-    //                     'text-black dark:text-[#506690] dark:group-hover:text-[#e0e6ed] ltr:pl-3 rtl:pr-3',
-    //                     {
-    //                         'dark:!text-[#e0e6ed]': isSidebarItemActive,
-    //                     },
-    //                 )}
-    //             >
-    //                 {text}
-    //             </span>
-    //         </div>
-
-    //         <div className={cn('-rotate-90 rtl:rotate-90')}>
-    //             <IconCaretDown />
-    //         </div>
-    //     </button>
-
-    //     <AnimateHeight duration={300} height={isOpen ? 'auto' : 0}>
-    //         <ul className='sub-menu text-gray-500'>
-    //             {childrenRoutes.map(route => (
-    //                 <li key={route.text}>
-    //                     <NavLink
-    //                         to={route.to}
-    //                         className={cn(
-    //                             'flex w-full items-center px-9 py-2.5 before:h-0.5 before:w-2 before:rounded before:bg-gray-300 hover:bg-gray-100 hover:text-[#4361ee] hover:before:!bg-[#4361ee] dark:before:bg-gray-500 dark:hover:bg-gray-900 dark:hover:text-[#4361ee] ltr:before:mr-2 rtl:before:ml-2',
-    //                             {
-    //                                 'text-[#4361ee] before:bg-[#4361ee]': route.active ?? false,
-    //                             },
-    //                         )}
-    //                     >
-    //                         {route.text}
-    //                     </NavLink>
-    //                 </li>
-    //             ))}
-    //         </ul>
-    //     </AnimateHeight>
-    // </li>
-    // )
 }
 
 const Sidebar = () => {
@@ -145,11 +105,24 @@ const Sidebar = () => {
 
             <PerfectScrollbar className='relative h-[calc(100vh-80px)]'>
                 <ul className='relative space-y-0.5 p-4 py-0 font-semibold'>
+                    <h2 className='dark:bg-dark -mx-4 mb-1 flex items-center bg-[#e0e6ed]/30 px-7 py-3 font-extrabold uppercase dark:bg-opacity-[0.08]'>
+                        <MinusIcon className='hidden h-5 w-4 flex-none' />
+                        <span>{'app'}</span>
+                    </h2>
+
                     <SidebarItemWithDropDownProps
                         text='Dashboard'
                         Icon={User2Icon}
                         childrenRoutes={[
                             { text: 'User', to: '/dashboard/user', active: true },
+                            { text: 'Admin', to: '/dashboard/admin' },
+                        ]}
+                    />
+                    <SidebarItemWithDropDownProps
+                        text='Dashboard'
+                        Icon={User2Icon}
+                        childrenRoutes={[
+                            { text: 'User', to: '/dashboard/user' },
                             { text: 'Admin', to: '/dashboard/admin' },
                         ]}
                     />
