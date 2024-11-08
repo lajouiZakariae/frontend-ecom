@@ -27,12 +27,13 @@ export const CategoriesDatatable = () => {
 
     const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null)
 
-    const columns: ColumnDef<Category>[] = useMemo(
+    const columns = useMemo<ColumnDef<Category>[]>(
         () => [
             {
+                id: 'image',
                 accessorKey: 'image',
                 header: t('Image'),
-                id: 'image',
+                enableSorting: false,
                 cell: ({ row }) => {
                     return (
                         <ImageCell

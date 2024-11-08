@@ -70,34 +70,26 @@
     @apply w-auto;
 }
 
-.nav-item > button,
 .nav-item > a {
     @apply mb-1 flex w-full items-center justify-between overflow-hidden whitespace-nowrap rounded-md p-2.5 text-[#506690] hover:bg-[#000]/[0.08] hover:text-black dark:hover:bg-[#181f32] dark:hover:text-[#e0e6ed];
 }
-.nav-item > button.active,
+
 .nav-item > a.active {
     @apply bg-[#000]/[0.08] text-black dark:bg-[#181f32] dark:text-[#e0e6ed];
 }
 
-.nav-item > button.active > div > span,
 .nav-item > a.active > div > span {
     @apply dark:!text-[#e0e6ed];
 }
 
-ul.sub-menu li button,
-ul.sub-menu li a {
+ul.sub-menu li button {
     @apply flex w-full items-center px-9 py-2.5 before:h-0.5 before:w-2 before:rounded before:bg-gray-300 hover:bg-gray-100 hover:text-[#4361ee] hover:before:!bg-[#4361ee] dark:before:bg-gray-500 dark:hover:bg-gray-900 dark:hover:text-[#4361ee] ltr:before:mr-2 rtl:before:ml-2;
 }
-ul.sub-menu li button.active,
-ul.sub-menu li a.active {
+
+ul.sub-menu li button.active {
     @apply text-[#4361ee] before:bg-[#4361ee];
 }
 
-.nav-item a div:first-child svg,
-.nav-item button div:first-child svg {
+.nav-item a div:first-child svg {
     @apply h-5 w-5 text-black/50 dark:text-white/50;
-}
-
-.main-container .main-content {
-    @apply transition-all duration-300 lg:ltr:ml-[260px] lg:rtl:mr-[260px];
 }

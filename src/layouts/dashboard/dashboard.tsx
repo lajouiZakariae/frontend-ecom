@@ -31,7 +31,7 @@ export const Dashboard: FC<DashboardProps> = ({ children, header, sidebar }) => 
                 ></div>
                 {/* screen loader */}
 
-                <div className='navbar-sticky main-container min-h-screen text-black'>
+                <div className='min-h-screen text-black'>
                     <aside
                         className={cn(
                             'fixed bottom-0 top-0 z-50 h-full min-h-screen w-[260px] transition-all duration-300',
