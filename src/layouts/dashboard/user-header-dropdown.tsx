@@ -6,7 +6,6 @@ import {
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
-    DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useClearUserData } from '@/features/auth/hooks/use-clear-user-data'
@@ -42,7 +41,7 @@ export const UserHeaderDropdown = () => {
     return (
         <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
             <DropdownMenuTrigger asChild>
-                <div className='duration-[400] group flex cursor-pointer items-center rounded-md p-2 transition hover:bg-neutral-100'>
+                <div className='group flex cursor-pointer items-center rounded-md p-2 transition hover:bg-neutral-100'>
                     <div className='size-[38px] rounded-full bg-neutral-200'></div>
                     <div className='ml-2 flex flex-col'>
                         <h3 className='font-bold tracking-wider text-neutral-900'>Zakariae Lajoui</h3>

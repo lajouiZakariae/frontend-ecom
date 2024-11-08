@@ -1,6 +1,7 @@
 import { FC, PropsWithChildren } from 'react'
 import { useSetUserData } from '../hooks/use-set-user-data'
 import { useUserQuery } from '../queries/use-user-query'
+import { FullScreenLoader } from '@/components/full-screen-loader'
 
 export const AuthenticationInitializer: FC<PropsWithChildren> = ({ children }) => {
     const setUserData = useSetUserData()
@@ -8,7 +9,7 @@ export const AuthenticationInitializer: FC<PropsWithChildren> = ({ children }) =
     const { data, isPending, isSuccess } = useUserQuery()
 
     if (isPending) {
-        return <div> Loading...</div>
+        return <FullScreenLoader />
     }
 
     if (isSuccess && data) {

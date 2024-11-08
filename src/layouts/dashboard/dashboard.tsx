@@ -10,7 +10,7 @@ interface DashboardProps extends PropsWithChildren {
     sidebar?: ReactNode
 }
 
-export const Dashboard: FC<DashboardProps> = ({ children, header, sidebar }) => {
+const Dashboard: FC<DashboardProps> = ({ children, header, sidebar }) => {
     const isSidebarOpen = useIsSidebarOpen()
     const toggleSidebar = useToogleIsSidebarOpen()
 
@@ -64,3 +64,5 @@ export const Dashboard: FC<DashboardProps> = ({ children, header, sidebar }) => 
         </div>
     )
 }
+
+export default Dashboard
