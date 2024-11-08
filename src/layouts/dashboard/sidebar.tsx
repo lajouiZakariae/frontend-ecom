@@ -3,80 +3,25 @@ import { useIsSidebarOpen } from '@/layouts/dashboard/hooks/use-is-sidebar-open'
 import { MenuIcon } from '@/icons/menu-icon'
 
 import PerfectScrollbar from 'react-perfect-scrollbar'
-import { FC, SVGProps, useEffect, useState } from 'react'
-import { NavLink, To } from 'react-router-dom'
-import AnimateHeight from 'react-animate-height'
-import { IconCaretDown } from '@/icons/icon-caret-down'
-import { MinusIcon, User2Icon } from 'lucide-react'
-
-interface SidebarItemProps {
-    text: string
-    to: To
-    active: boolean
-    Icon: FC<SVGProps<SVGSVGElement>>
-}
-
-const SidebarItem = ({ text, to, active, Icon }: SidebarItemProps) => {
-    return (
-        <li className='menu nav-item'>
-            <NavLink to={to} className='group'>
-                <div className='flex items-center'>
-                    <Icon className='shrink-0 group-hover:!text-primary' />
-                    <span className='dark:group-hover:text-white-dark text-black dark:text-[#506690] ltr:pl-3 rtl:pr-3'>
-                        {text}
-                    </span>
-                </div>
-            </NavLink>
-        </li>
-    )
-}
-
-interface SidebarItemWithDropDownProps {
-    text: string
-    Icon: FC<SVGProps<SVGSVGElement>>
-    childrenRoutes: { text: string; to: To; active?: boolean }[]
-}
-
-const SidebarItemWithDropDownProps = ({ text, Icon, childrenRoutes }: SidebarItemWithDropDownProps) => {
-    const [isOpen, setIsOpen] = useState(false)
-
-    const isSidebarItemActive = childrenRoutes.some(route => route.active)
-
-    return (
-        <li className='menu nav-item'>
-            <button
-                type='button'
-                className={`${isSidebarItemActive ? 'active' : ''} nav-link group w-full`}
-                onClick={() => setIsOpen(isOpen => !isOpen)}
-            >
-                <div className='flex items-center'>
-                    <Icon className='shrink-0 group-hover:!text-primary' />
-                    <span className='dark:group-hover:text-white-dark text-black dark:text-[#506690] ltr:pl-3 rtl:pr-3'>
-                        {text}
-                    </span>
-                </div>
-
-                <div className={!isSidebarItemActive ? '-rotate-90 rtl:rotate-90' : ''}>
-                    <IconCaretDown />
-                </div>
-            </button>
-
-            <AnimateHeight duration={300} height={isOpen ? 'auto' : 0}>
-                <ul className='sub-menu text-gray-500'>
-                    {childrenRoutes.map(route => (
-                        <li>
-                            <NavLink to={route.to}>{route.text}</NavLink>
-                        </li>
-                    ))}
-                </ul>
-            </AnimateHeight>
-        </li>
-    )
-}
+import { useEffect, useState } from 'react'
+import { BoxIcon, MinusIcon, User2Icon } from 'lucide-react'
+import { SidebarItemWithDropDownProps } from './sidebar-item-with-dropdown'
+import { useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 const Sidebar = () => {
     const isSidebarOpen = useIsSidebarOpen()
+
     const toggleSidebar = useToogleIsSidebarOpen()
+
+    const { t } = useTranslation()
+
+    const { pathname } = useLocation()
+
+    const [currentActiveMenu, setCurrentActiveMenu] = useState<null | string>(null)
+
+    const toggleActiveMenu = (menu: string) =>
+        currentActiveMenu === menu ? setCurrentActiveMenu(null) : setCurrentActiveMenu(menu)
 
     useEffect(() => {
         if (window.innerWidth < 1024 && !isSidebarOpen) {
@@ -111,19 +56,26 @@ const Sidebar = () => {
                     </h2>
 
                     <SidebarItemWithDropDownProps
-                        text='Dashboard'
+                        id='customers'
+                        text={t('Customers')}
                         Icon={User2Icon}
+                        currentActiveMenu={currentActiveMenu}
+                        toggleActiveMenu={toggleActiveMenu}
                         childrenRoutes={[
-                            { text: 'User', to: '/dashboard/user', active: true },
-                            { text: 'Admin', to: '/dashboard/admin' },
+                            { text: 'List', to: '/customers', active: pathname === '/customers' },
+                            { text: 'Create', to: '/customers/create', active: pathname === '/customers/create' },
                         ]}
                     />
+
                     <SidebarItemWithDropDownProps
-                        text='Dashboard'
-                        Icon={User2Icon}
+                        id='categories'
+                        text={t('Categories')}
+                        Icon={BoxIcon}
+                        currentActiveMenu={currentActiveMenu}
+                        toggleActiveMenu={toggleActiveMenu}
                         childrenRoutes={[
-                            { text: 'User', to: '/dashboard/user' },
-                            { text: 'Admin', to: '/dashboard/admin' },
+                            { text: 'List', to: '/categories', active: pathname === '/categories' },
+                            { text: 'Create', to: '/categories/create', active: pathname === '/categories/create' },
                         ]}
                     />
                 </ul>
