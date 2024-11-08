@@ -64,7 +64,7 @@ export const SidebarItemWithDropDownProps = ({
             <AnimateHeight duration={300} height={currentActiveMenu === id ? 'auto' : 0}>
                 <ul className='sub-menu text-gray-500'>
                     {childrenRoutes.map(route => (
-                        <li className='flex items-center px-2.5'>
+                        <li key={route.to.toString()} className='flex items-center px-2.5'>
                             <span className='relative ml-2.5 inline-block h-[44px] w-px rounded-full border-none bg-gray-300'>
                                 {route.active ? (
                                     <span className='absolute right-1/2 top-1/2 size-[9px] -translate-y-1/2 translate-x-1/2 rounded-full bg-primary'></span>

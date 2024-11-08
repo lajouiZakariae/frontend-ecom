@@ -44,7 +44,7 @@ const LoginView = () => {
 
     return (
         <div className='flex min-h-screen items-center justify-center bg-gray-100'>
-            <Card className='w-full max-w-md'>
+            <Card className='w-[90%] max-w-md md:w-full'>
                 <CardHeader>
                     <CardTitle className='text-center text-2xl font-bold'>{t('Login')}</CardTitle>
                 </CardHeader>
